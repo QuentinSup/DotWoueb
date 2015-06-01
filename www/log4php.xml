@@ -1,0 +1,19 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+ 
+    <appender name="myConsoleAppender" class="LoggerAppenderConsole" />
+
+    <appender name="default" class="LoggerAppenderRollingFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%date %logger - %-5level - %msg%n" />
+        </layout>
+        <param name="file" value="logs/dw.log" />
+        <param name="maxFileSize" value="1MB" />
+        <param name="maxBackupIndex" value="5" />
+    </appender>
+
+    <root>
+        <level value="TRACE" />
+        <appender_ref ref="default" />
+    </root>
+	
+</configuration>

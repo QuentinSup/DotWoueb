@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dotwoueb>
+	<about>
+		<name>dotWoueb</name>
+		<author>Quentin Supernant</author>
+		<version>1.0</version>
+		<description>FrameWork dotWoueb</description>
+	</about>
+	<config></config>
+</dotwoueb>
