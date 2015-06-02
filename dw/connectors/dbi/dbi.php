@@ -112,7 +112,7 @@ class dbi_dataEntity
 	 * Recherche les enregistrements correspondant aux crit貥s courant de l'objet
 	 * 
 	 */
-	public function find($avalues = null, $orderBy = null, $bfetch = true, $ioffset = null, $ilimit = null)
+	public function find($avalues = null, $orderBy = null, $bfetch = true, $ioffset = null, $ilimit = null, $whereAdd = null)
 	{
 		$sorderBy = null;
 		if(!is_null($orderBy))
@@ -125,7 +125,7 @@ class dbi_dataEntity
 			}
 		}
 		$this -> setFrom($avalues);
-		$this -> _odataSet = $this -> _odb -> select($this -> getTableName(), $this -> getAttributes(true), $sorderBy, '*', $ioffset, $ilimit);
+		$this -> _odataSet = $this -> _odb -> select($this -> getTableName(), $this -> getAttributes(true), $whereAdd, $sorderBy, $ioffset, $ilimit);
 		if($bfetch)
 		{
 			$this -> fetch();
@@ -137,18 +137,18 @@ class dbi_dataEntity
 	 * select()
 	 * Alternative ࠬto find()
 	 */
-	public function select($avalues = null, $ioffset = null, $ilimit = null, $orderBy = null)
+	public function select($whereAdd = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
-		return $this -> find($avalues, $orderBy, true, $ioffset, $ilimit);
+		return $this -> find(null, $orderBy, true, $ioffset, $ilimit, $whereAdd);
 	}
 	
 	/**
 	 * search()
 	 * Alternative ࠬto find()
 	 */
-	public function search($ioffset = null, $ilimit = null, $orderBy = null)
+	public function search($avalues = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
-		return $this -> find(null, $orderBy, true, $ioffset, $ilimit);
+		return $this -> find($avalues, $orderBy, true, $ioffset, $ilimit);
 	}
 	
 	public function castSql($svalue)
@@ -844,6 +844,7 @@ class dbi
  	{
  		$ilimit = null;
  	}
+	  
   	$squery  = $this -> _odb -> prepareQuery($squery, $aparams, $ioffset, $ilimit, $bescapequery);
   	$idquery = $this -> _startQuery($squery);
   	$ores    = $this -> _odb -> query($squery, $ioffset, $ilimit);
@@ -863,13 +864,15 @@ class dbi
  	 * Effectue une requ괥 de s鬥ction
  	 * @param string $sentity nom de la table
  	 * @param array $aattributes tableau associatif column => value des champs ࠭ette ࠪour
+	 * @param string $whereAdd clause SQL WHERE complémentaire
  	 * @param string $squeryEnd clause SQL en fin de requ괥 (exemple : ORDER BY ...) 
  	 * @param string $mselectList Liste de champs de la clause Select
  	 * @param int	 $ioffset
  	 * @param int 	 $ilimit
+	 * @param string $mselectList Liste de champs de la clause Select
  	 * @return dbi_dataSet
  	 */
-	public function select($sentity, $aattributes, $squeryEnd = null, $mselectList = '*', $ioffset = null, $ilimit = null)
+	public function select($sentity, $aattributes, $whereAdd = null, $squeryEnd = null, $ioffset = null, $ilimit = null, $mselectList = '*')
 	{
 		$awhere = array();
 		if(is_array($mselectList))
@@ -880,7 +883,18 @@ class dbi
 		{
 			$awhere[] = $sattr." = '".$this -> _odb -> escapeString($aattributes[$sattr])."'";
 		}
-		return $this -> query("SELECT {?} FROM {?} ".(!empty($awhere)?" WHERE ".implode(' AND ', $awhere):"").(!is_null($squeryEnd)?" ".$squeryEnd:""), array($mselectList, $sentity), $ioffset, $ilimit);
+		$wherePart = (!empty($awhere)?" WHERE ".implode(' AND ', $awhere):"");
+		if(!is_null($whereAdd)) {
+			if(is_string($whereAdd)) {
+				$wherePart .= ($wherePart == ""?" WHERE ".$whereAdd:' AND '.$whereAdd);
+			} else {
+				foreach($whereAdd as $whereStr) {
+					$wherePart .= ' AND '.$whereStr;
+				}
+			}
+		}
+
+		return $this -> query("SELECT {?} FROM {?} ".$wherePart.(!is_null($squeryEnd)?" ".$squeryEnd:""), array($mselectList, $sentity), $ioffset, $ilimit);
 	}
 	
 	/**
