@@ -40,13 +40,13 @@ class dwObject {
 			{
 				foreach($ary[$var] as &$val)
 				{
-					if(is_object($val) && is_subclass_of($val, __CLASS__))
+					if(is_object($val) && (get_class($val) == __CLASS__ || is_subclass_of($val, __CLASS__)))
 					{
 						$val = $val -> toArray();
 					}	
 				}
 			} else {
-				if(is_object($this -> $var) && is_subclass_of($this -> $var, __CLASS__))
+				if(is_object($this -> $var) && (get_class($this -> $var) == __CLASS__ || is_subclass_of($this -> $var, __CLASS__)))
 				{
 					$ary[$var] = $this -> $var -> toArray();	
 				}
