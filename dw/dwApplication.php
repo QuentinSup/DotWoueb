@@ -207,7 +207,7 @@ class dwApplication extends dwXMLConfig
 				}
 			}
 			
-		} catch(exception $e) {
+		} catch(\Exception $e) {
 			throw new dwException(E_APP_LOAD);	
 		}
 	}
@@ -233,6 +233,14 @@ class dwApplication extends dwXMLConfig
 	 */
 	public function getProperty($name, $defaultValue = null) {
 		return ary::get($this -> _properties, $name, $defaultValue);
+	}
+	
+	/**
+	 * Return the list of properties
+	 * @return the full list
+	 */
+	public function getProperties() {
+		return $this -> _properties;
 	}
 	
 	/**
