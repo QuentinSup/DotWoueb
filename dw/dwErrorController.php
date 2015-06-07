@@ -129,7 +129,7 @@ class dwErrorController
         	dwError::raise($ae);
 			debug_print_backtrace();
 			echo "<br />******<br />";
-			die;
+
         }
 		
 	}
@@ -144,15 +144,14 @@ class dwErrorController
 		
 		if(dw::isDebug())
        	{
-			dwException::raise($exception);
 			echo "<br />******<br />";
         	dwException::raise($exception);
 			debug_print_backtrace();
 			echo "<br />******<br />";
-			die;
+
 		}
 	}
-		
+	
 	/**
 	 * Initialise la capture des exceptions et des erreurs
 	 */
