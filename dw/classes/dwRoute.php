@@ -51,7 +51,8 @@ class dwRoute {
 	public function getScore() {
 
 		$nbvars = mb_substr_count($this -> _uri, ":");
-		$weight = mb_substr_count($this -> _uri, "/") - 1 - $nbvars;
+		$nbopts = mb_substr_count($this -> _uri, "?");
+		$weight = mb_substr_count($this -> _uri, "/") * 10 - $nbvars - $nbopts;
 
 		if(!$this -> _routeFn) {
 			$weight--;
@@ -113,7 +114,7 @@ class dwRoute {
 				
 		$haystackList = explode("/", $haystack);
 		$needleList = explode("/", $needle);
-				
+
 		if(count($haystackList) != count($needleList)) {
 			return false;
 		}
