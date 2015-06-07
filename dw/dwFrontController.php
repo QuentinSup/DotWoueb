@@ -34,7 +34,7 @@ class dwFrontController {
 
 		$route = $request -> getRoute();
 		$response = new dwHttpResponse();
-		$model = new dwModel(array());
+		$model = new dwModel(array("properties" => dw::App() -> getProperties()));
 		
 		$response -> start();
 				
