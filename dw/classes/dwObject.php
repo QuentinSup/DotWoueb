@@ -86,8 +86,11 @@ class dwObject {
 		return !$this -> isDefined($sattribute) || is_null($this -> $sattribute);
 	}
 
-	public function isEmpty($sattribute)
+	public function isEmpty($sattribute = null)
 	{
+		if(is_null($sattribute)) {
+			return count($this -> getAttributes()) == 0;
+		}
 		return !$this -> isDefined($sattribute) || empty($this -> $sattribute);
 	}
 	
