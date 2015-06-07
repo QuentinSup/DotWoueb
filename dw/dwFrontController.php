@@ -36,6 +36,8 @@ class dwFrontController {
 		$response = new dwHttpResponse();
 		$model = new dwModel(array());
 		
+		$response -> start();
+				
 		try {
 			
 			$callback = null;
@@ -90,6 +92,12 @@ class dwFrontController {
 						}
 
 						if(is_string($view)) {
+							if(strpos($view, 'redirect:') === 0) {
+								$url = substr($view, 9);
+								header("Location: $url");
+								die;
+							}
+							
 							if(strpos($view, 'view:') === 0) {
 								$view = new dwTemplateView(substr($view, 5));
 								$modelAttributes = $model -> toArray();
@@ -121,11 +129,13 @@ class dwFrontController {
 			{
 				$response -> statusCode = 404;
 			}
-			
-		} catch(exception $e) {
-			dwErrorController::throwError($e -> getMessage(), $e);
+		
+		} catch(\Exception $e) {
+						
+			$response -> statusCode = 500;
+			dwErrorController::exceptionHandler($e);
 		}
-
+		
 		$response -> flush();
 		
 	}
