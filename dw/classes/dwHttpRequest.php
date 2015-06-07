@@ -16,7 +16,7 @@ class dwHttpRequest {
 	public function __construct($uri = null, $method = null, $contentType = null) {
 		
 		if(is_null($uri)) {
-			$uri = server::get('QUERY_STRING');
+			$uri = urldecode(server::get('QUERY_STRING'));
 		}
 		
 		if(substr($uri, 0, 1) != "/") {
@@ -73,6 +73,21 @@ class dwHttpRequest {
 	
 	public function getHostName() {
 		return server::get('SERVER_NAME');
+	}
+	
+	public function getRemoteAddr() {
+		return server::get('REMOTE_ADDR');
+	}
+	
+	public function getClientIP() {
+		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+		return $ip;
 	}
 	
 }
