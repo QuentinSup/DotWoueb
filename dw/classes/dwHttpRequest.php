@@ -17,10 +17,12 @@ class dwHttpRequest {
 	public function __construct($uri = null, $method = null, $contentType = null) {
 		
 		if(is_null($uri)) {
+
 			$uri = request::keyAt(0);
 			if($uri == 'PHPSESSID') {
 				$uri = "/";
 			}
+
 		}
 		
 		if(substr($uri, 0, 1) != "/") {
