@@ -903,6 +903,7 @@ class dbi
 				}
 			}
 		}
+
 		return $this -> query("SELECT {?} FROM {?} ".$wherePart.(!is_null($squeryEnd)?" ".$squeryEnd:""), array($mselectList, $sentity), $ioffset, $ilimit);
 	}
 	
