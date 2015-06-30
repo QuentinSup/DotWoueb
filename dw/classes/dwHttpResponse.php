@@ -14,10 +14,16 @@ class dwHttpResponse {
 			header('Content-Type: '.$this -> contentType, false);
 		}
 		echo $this -> content;
+		ob_end_flush();
 	}
 	
 	public function setContent($content) {
 		$this -> content = $content;
+	}
+	
+	public function start() {
+		// Start treatment
+		ob_start();
 	}
 	
 }

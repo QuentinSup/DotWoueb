@@ -82,18 +82,6 @@ class dwDate
 			return date('m', $idate);
 		}
 	}
-	
-	/**
-	 * getLiteralMonth()
-	 * Retourne la valeur du mois de la date
-	 * @return string
-	 * @param int $idate valeur de la date au format num鲩que
-	 * @param array $aConvert tableau contenant la liste des Mois de l'ann饠
-	 */
-	function getLiteralMonth($idate, $aConvert = array('Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Ao봧, 'Septembre', 'Octobre', 'Novembre', 'D飥mbre'))
-	{
-		return self::getMonth(self::getMonth($idate, $aConvert));
-	}
 
 	/**
 	 * getDay();

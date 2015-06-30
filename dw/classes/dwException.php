@@ -8,7 +8,7 @@ namespace dw\classes;
  * @author Quentin Supernant
  * @package dotWoueb
  */
- class dwException extends \exception
+ class dwException extends \Exception
  {
 	private $_susermessage = '';
 	

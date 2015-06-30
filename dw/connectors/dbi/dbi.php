@@ -38,7 +38,7 @@ class dbi_dataObject extends dwObject
 
 }
 
-class dbi_dataEntity 
+class dbi_dataEntity extends dwObject 
 {
 	protected $_sentity = null;
 	protected $_aprimaryKey = null;
@@ -60,7 +60,7 @@ class dbi_dataEntity
 		{
 			return $this -> _aattributes[$sattr];
 		} else {
-			throw new exception(E_DBI_UNKNOW_ATTRIBUTE);
+			throw new dwException(E_DBI_UNKNOW_ATTRIBUTE);
 		}
 	}
 
@@ -107,12 +107,16 @@ class dbi_dataEntity
 		return $this -> _odb -> count($this -> getTableName(), $this -> getAttributes(true));
 	}
 	
+	public function escapeValue($str) {
+		return $this -> _odb -> getInterface() -> escapeString($str);
+	}
+	
 	/**
 	 * find()
 	 * Recherche les enregistrements correspondant aux crit貥s courant de l'objet
 	 * 
 	 */
-	public function find($avalues = null, $orderBy = null, $bfetch = true, $ioffset = null, $ilimit = null)
+	public function find($avalues = null, $orderBy = null, $bfetch = true, $ioffset = null, $ilimit = null, $whereAdd = null)
 	{
 		$sorderBy = null;
 		if(!is_null($orderBy))
@@ -125,7 +129,7 @@ class dbi_dataEntity
 			}
 		}
 		$this -> setFrom($avalues);
-		$this -> _odataSet = $this -> _odb -> select($this -> getTableName(), $this -> getAttributes(true), $sorderBy, '*', $ioffset, $ilimit);
+		$this -> _odataSet = $this -> _odb -> select($this -> getTableName(), $this -> getAttributes(true), $whereAdd, $sorderBy, $ioffset, $ilimit);
 		if($bfetch)
 		{
 			$this -> fetch();
@@ -137,18 +141,18 @@ class dbi_dataEntity
 	 * select()
 	 * Alternative ࠬto find()
 	 */
-	public function select($avalues = null, $ioffset = null, $ilimit = null, $orderBy = null)
+	public function select($whereAdd = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
-		return $this -> find($avalues, $orderBy, true, $ioffset, $ilimit);
+		return $this -> find(null, $orderBy, true, $ioffset, $ilimit, $whereAdd);
 	}
 	
 	/**
 	 * search()
 	 * Alternative ࠬto find()
 	 */
-	public function search($ioffset = null, $ilimit = null, $orderBy = null)
+	public function search($avalues = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
-		return $this -> find(null, $orderBy, true, $ioffset, $ilimit);
+		return $this -> find($avalues, $orderBy, true, $ioffset, $ilimit);
 	}
 	
 	public function castSql($svalue)
@@ -162,7 +166,7 @@ class dbi_dataEntity
 		{
 			$this -> _aattributes[$sattr] = $mvalue;
 		} else {
-			throw new exception(E_DBI_UNKNOW_ATTRIBUTE);
+			throw new dwException(E_DBI_UNKNOW_ATTRIBUTE);
 		}
 	}
 	
@@ -701,7 +705,7 @@ class dbi
 			return 0;	
 		}
 	} else {
-		throw new exception(E_DBI_GEN_ID);	
+		throw new dwException(E_DBI_GEN_ID);	
 	}
   }
   
@@ -776,7 +780,7 @@ class dbi
 	            'database' => $res[4]
         	);
         } else {
-        	throw new exception(E_DBI_DSN);
+        	throw new dwException(E_DBI_DSN);
         }
   }
   
@@ -799,7 +803,7 @@ class dbi
  	{
  		$db -> connect($sdsn);
  		return true;
- 	} catch(exception $e)
+ 	} catch(\Exception $e)
  	{
  		return $e -> getMessage();
  	}
@@ -844,6 +848,7 @@ class dbi
  	{
  		$ilimit = null;
  	}
+	  
   	$squery  = $this -> _odb -> prepareQuery($squery, $aparams, $ioffset, $ilimit, $bescapequery);
   	$idquery = $this -> _startQuery($squery);
   	$ores    = $this -> _odb -> query($squery, $ioffset, $ilimit);
@@ -863,13 +868,15 @@ class dbi
  	 * Effectue une requ괥 de s鬥ction
  	 * @param string $sentity nom de la table
  	 * @param array $aattributes tableau associatif column => value des champs ࠭ette ࠪour
+	 * @param string $whereAdd clause SQL WHERE complémentaire
  	 * @param string $squeryEnd clause SQL en fin de requ괥 (exemple : ORDER BY ...) 
  	 * @param string $mselectList Liste de champs de la clause Select
  	 * @param int	 $ioffset
  	 * @param int 	 $ilimit
+	 * @param string $mselectList Liste de champs de la clause Select
  	 * @return dbi_dataSet
  	 */
-	public function select($sentity, $aattributes, $squeryEnd = null, $mselectList = '*', $ioffset = null, $ilimit = null)
+	public function select($sentity, $aattributes, $whereAdd = null, $squeryEnd = null, $ioffset = null, $ilimit = null, $mselectList = '*')
 	{
 		$awhere = array();
 		if(is_array($mselectList))
@@ -878,9 +885,25 @@ class dbi
 		}
 		foreach(array_keys($aattributes) as $sattr)
 		{
-			$awhere[] = $sattr." = '".$this -> _odb -> escapeString($aattributes[$sattr])."'";
+			$awhere[] = $sattr." = ".$this -> toQueryString($aattributes[$sattr]);
 		}
-		return $this -> query("SELECT {?} FROM {?} ".(!empty($awhere)?" WHERE ".implode(' AND ', $awhere):"").(!is_null($squeryEnd)?" ".$squeryEnd:""), array($mselectList, $sentity), $ioffset, $ilimit);
+		$wherePart = (!empty($awhere)?" WHERE ".implode(' AND ', $awhere):"");
+		if(!is_null($whereAdd)) {
+			if(is_string($whereAdd)) {
+				$wherePart .= ($wherePart == ""?" WHERE ".$whereAdd:' AND '.$whereAdd);
+			} elseif(is_array($whereAdd)) {
+				if(is_assoc($whereAdd)) {
+					foreach($whereAdd as $whereAttr => $whereValue) {
+						$wherePart .= ($wherePart == ""?" WHERE ".$whereAttr:' AND '.$whereAttr)." = ".$this -> toQueryString($whereValue);
+					}
+				} else {
+					foreach($whereAdd as $whereStr) {
+						$wherePart .= ($wherePart == ""?" WHERE ".$whereStr:' AND '.$whereStr);
+					}
+				}
+			}
+		}
+		return $this -> query("SELECT {?} FROM {?} ".$wherePart.(!is_null($squeryEnd)?" ".$squeryEnd:""), array($mselectList, $sentity), $ioffset, $ilimit);
 	}
 	
 	/**
@@ -897,7 +920,7 @@ class dbi
 		$awhere = array();
 		foreach(array_keys($aattributes) as $sattr)
 		{
-			$awhere[] = $sattr." = '".$this -> _odb -> escapeString($aattributes[$sattr])."'";
+			$awhere[] = $sattr." = ".$this -> toQueryString($aattributes[$sattr]);
 		}
 		$ods = $this -> query("SELECT COUNT({?}) AS DBICOUNT FROM {?} ".(!empty($awhere)?" WHERE ".implode(' AND ', $awhere):""), array($scountAttr, $sentity));
 		return (int)$ods -> f('DBICOUNT');
@@ -918,12 +941,7 @@ class dbi
 		$aWhere = array();
 		foreach(array_keys($aattributes) as $sattr)
 		{
-			if(substr($aattributes[$sattr], 0, 1) == "@")
-			{
-				$sql = $sattr." = ".$this -> _odb -> escapeString(substr($aattributes[$sattr], 1));	
-			} else {
-				$sql = $sattr." = '".$this -> _odb -> escapeString($aattributes[$sattr])."'";
-			}
+			$sql = $sattr." = ".$this -> toQueryString($aattributes[$sattr]);	
 			if(!in_array($sattr, $akeys))
 			{
 				$aSet[] = $sql;
@@ -933,14 +951,29 @@ class dbi
 		}
 		if(!is_null($whereAdd))
 		{
-			$aWhere[] = $whereAdd;	
+			if(is_string($whereAdd)) {
+				$aWhere[] = $whereAdd;
+			} else {
+				foreach($whereAdd as $key => $sval)
+				{	
+					$aWhere[] = $key." = ".$this -> toQueryString($sval);		
+				}
+			}
 		}
 		if(self::$_bforeachrow && empty($aWhere))
 		{
-			throw new exception(E_DBI_FOREACHROW);
+			throw new dwException(E_DBI_FOREACHROW);
 		}
 		$swhere = implode(' AND ', $aWhere);
 		return $this -> query("UPDATE {?} SET ".implode(", ", $aSet).(!empty($swhere)?" WHERE ".$swhere:""), array($sentity));
+	}
+	
+	protected function toQueryString($str) {
+		if(substr($str, 0, 1) == "@")
+		{
+			return $this -> _odb -> escapeString(substr($str, 1));	
+		}
+		return "'".$this -> _odb -> escapeString($str)."'";
 	}
  
   	/**
@@ -956,24 +989,23 @@ class dbi
 		$aWhere = array();
 		foreach(array_keys($aattributes) as $sattr)
 		{
-			if(substr($aattributes[$sattr], 0, 1) == "@")
-			{
-				$sql = $sattr." = ".$this -> _odb -> escapeString(substr($aattributes[$sattr], 1));	
-			} else {
-				$sql = $sattr." = '".$this -> _odb -> escapeString($aattributes[$sattr])."'";
-			}
-			$sql = $sattr." = '".$this -> _odb -> escapeString($aattributes[$sattr])."'";
-			{
-				$aWhere[] = $sql;
-			}
+			$sql = $sattr." = ".$this -> toQueryString($aattributes[$sattr]);
+			$aWhere[] = $sql;
 		}
 		if(!is_null($whereAdd))
 		{
-			$aWhere[] = $whereAdd;	
+			if(is_string($whereAdd)) {
+				$aWhere[] = $whereAdd;
+			} else {
+				foreach($whereAdd as $key => $sval)
+				{	
+					$aWhere[] = $key." = ".$this -> toQueryString($sval);		
+				}
+			}
 		}
 		if(self::$_bforeachrow && empty($aWhere))
 		{
-			throw new exception(E_DBI_FOREACHROW);
+			throw new dwException(E_DBI_FOREACHROW);
 		}
 		$swhere = implode(' AND ', $aWhere);
 		return $this -> query("DELETE FROM {?} ".(!empty($swhere)?" WHERE ".$swhere:""), array($sentity));
@@ -992,12 +1024,7 @@ class dbi
  		$aValues = array();
 		foreach($aKeys as $sattr)
 		{
-			if(substr($aattributes[$sattr], 0, 1) == "@")
-			{
-				$aValues[] = $this -> _odb -> escapeString(substr($aattributes[$sattr], 1));	
-			} else {
-				$aValues[] = "'".$this -> _odb -> escapeString($aattributes[$sattr])."'";
-			}
+			$aValues[] = $this -> toQueryString($aattributes[$sattr]);
 		}
 		return $this -> query("INSERT INTO {?}(".implode(',', $aKeys).") VALUES(".implode(", ", $aValues).")", array($sentity));
  	}
@@ -1175,7 +1202,7 @@ class '.$stable.'Entity extends dw\connectors\dbi\dbi_dataEntity
 	  				eval($classDef);
   				 }
 	  		} else {
-	  			throw new exception(E_DBI_FACTORY);	
+	  			throw new dwException(E_DBI_FACTORY);	
 	  		}
   		}
 	  	$classEntity = $stable.'Entity';

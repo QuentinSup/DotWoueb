@@ -32,7 +32,7 @@ dwCacheFile::setCacheDir(DW_CACHE_DIR);
 dwTemplate::setWorkDir(DW_RUNTIME_DIR);
 dwNumeric::setPrecision(4);
 
-dw::loadApplication(APP_DIR);
+dw::loadApplication(DW_WEBINF_DIR);
 
 if(is_dir(DW_TRADUCER_DIR.dw::getLocale()."/"))
 {

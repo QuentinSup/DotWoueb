@@ -16,7 +16,6 @@ define('E_PLUG_UNKNOW', 101);
 class dwPlugins {
 	
 	public static $pathPlugins = './';
-	public static $tablePrefix = 'plug_';
 	public static $pluginSuffix = '';
 	private static $_aPluginLoaded = array();
 	 
@@ -29,7 +28,7 @@ class dwPlugins {
 	{
 		if(!self::isLoaded($splugin))
 		{
-			throw new exception(E_PLUG_UNKNOW);
+			throw new \Exception(E_PLUG_UNKNOW);
 		}
 		return self::$_aPluginLoaded[$splugin];
 	}
@@ -41,9 +40,9 @@ class dwPlugins {
 	
 	public static function &loadPlugin($splugin, $pathPlugins, $useCache = true)
 	{
-		//if(!isset(self::$_aPluginLoaded[$splugin]) || !$useCache)
+		if(!isset(self::$_aPluginLoaded[$splugin]) || !$useCache)
 		{
-			include_once($pathPlugins.'/'.$splugin.'/class.php');
+			include_once($pathPlugins.'/'.$splugin.'/'.$splugin.'.php');
 			$class = $splugin.self::$pluginSuffix;
 			if(class_exists($class))
 			{
@@ -51,7 +50,7 @@ class dwPlugins {
 				$plugin -> prepare($pathPlugins.'/'.$splugin);
 				self::$_aPluginLoaded[$splugin] = $plugin;
 			} else {
-				throw new exception(E_PLUG_LOAD);	
+				throw new \Exception(E_PLUG_LOAD);	
 			}
 		}
 		return self::$_aPluginLoaded[$splugin];	

@@ -32,6 +32,7 @@ class dwApplication extends dwXMLConfig
 	protected $_connectors = array();
 	protected $_properties = array();
 	protected $_namespace = "";
+	protected $_controllers = array();
 	
 	// Logger
 	private static function logger() {
@@ -122,7 +123,6 @@ class dwApplication extends dwXMLConfig
 	protected function loadPluginConfig($xmlPluginConfig) {
 		$oplug = dwPlugins::load((string)$xmlPluginConfig -> name);
 		$this -> _plugins[(string)$xmlPluginConfig -> name] = $oplug;
-		$oplug -> setXMLConfig($xmlPluginConfig);
 	}
 	
 	/**
@@ -194,7 +194,7 @@ class dwApplication extends dwXMLConfig
 				}
 			}
 			
-			if(isset($xml -> config) && isset($xml -> config -> properties))
+			if(isset($xml -> config) && isset($xml -> config -> properties) && isset($xml -> config -> properties -> property))
 			{
 				if(is_object($xml -> config -> properties -> property)) {
 					$this -> loadPropertyConfig($xml -> config -> properties -> property);	
@@ -206,7 +206,7 @@ class dwApplication extends dwXMLConfig
 				}
 			}
 			
-		} catch(exception $e) {
+		} catch(\Exception $e) {
 			throw new dwException(E_APP_LOAD);	
 		}
 	}
@@ -232,6 +232,14 @@ class dwApplication extends dwXMLConfig
 	 */
 	public function getProperty($name, $defaultValue = null) {
 		return ary::get($this -> _properties, $name, $defaultValue);
+	}
+	
+	/**
+	 * Return the list of properties
+	 * @return the full list
+	 */
+	public function getProperties() {
+		return $this -> _properties;
 	}
 	
 	/**
@@ -264,74 +272,122 @@ class dwApplication extends dwXMLConfig
 			self::logger() -> info("Initialize app");
 		}
 		
+		// Initialize connectors
+		
+		if(self::logger() -> isInfoEnabled()) {
+			self::logger() -> info("Initialize connectors");
+		}
+		
 		foreach($this -> _connectors as $connector) {
 			$connector -> prepare();
 		}
-						
-		$controllersList = dwFile::ls(DW_CONTROLLERS_DIR);
-		foreach($controllersList as $controllerPath) {
+		
+		// Initialize controllers and mapping
+		
+		if(self::logger() -> isInfoEnabled()) {
+			self::logger() -> info("Initialize controllers");
+		}
+		
+		self::includeOnceDirectory(DW_CONTROLLERS_DIR);
+		
+		$this -> loadControllersMapping();
+		
+	}
+	
+	/**
+	 * Try to include all files from a directory
+	 * $dir The directory to scan
+	 */
+	public static function includeOnceDirectory($dir) {
+		$list = dwFile::ls($dir);
+		foreach($list as $file) {
 
-			if(!is_dir($controllerPath)) {
+			if(!is_dir($file)) {
 							
-				include_once($controllerPath);
-				
-				$controllerName = dwFile::getAbsoluteName($controllerPath);
-				$controllerClass = $this -> getNamespace().$controllerName;
-				$annotations = array();
-				$reflection = new \ReflectionAnnotatedClass($controllerClass);
-				
-				$annotationsMappingClass = $reflection -> getAnnotations("Mapping");
-				$reflectionMethods = $reflection -> getMethods();
+				include_once($file);
+			
+			}
+		}	
+	}
+	
+	/**
+	 * Take a look into declared classes to identify Controllers and set mapping
+	 */
+	public function loadControllersMapping() {
 
-				foreach($reflectionMethods as $reflectionMethod) {
-					
-					$class = "class";
-					$fn = $reflectionMethod -> $class."::".$reflectionMethod -> name;
-					
-					$annotationsMapping = $reflectionMethod -> getAllAnnotations("Mapping");	
-
-					foreach($annotationsMapping as $mapping) {
-						
-						if(count($annotationsMappingClass) > 0) {
-						
-							foreach($annotationsMappingClass as $mappingClass) {
-
-								$value = "";
-								if($mappingClass -> getValue()) {
-									$value = $mappingClass -> getValue();
-									if(substr($value, strlen($value) - 1) != "/") {
-										$value .= "/";
-									}
-								}
-								
-								$uri = $value.$mapping -> getValue();
-								$method = $mapping -> getMethod()?$mapping -> getMethod():$mappingClass -> getMethod();
-								$consumes = $mapping -> getConsumes()?$mapping -> getConsumes():$mappingClass -> getConsumes();
-								$produces = $mapping -> getProduces()?$mapping -> getProduces():$mappingClass -> getProduces();
-
-								$this -> getRouteMap() -> addRoute(
-										$uri, 
-										$fn, 
-										$method, 
-										$consumes, 
-										$produces);		
-							}
-							
-						} else {
-							
-							$this -> getRouteMap() -> addRoute(
-								$mapping -> getValue(), 
-								$fn, 
-								$mapping -> getMethod(), 
-								$mapping -> getConsumes(), 
-								$mapping -> getProduces());	
-							
-						}
-					}
-				}
-
+		if(self::logger() -> isInfoEnabled()) {
+			self::logger() -> info("Load controllers from declared classes and set mapping");
+		}
+		
+		$classes = get_declared_classes();
+		foreach($classes as $class) {
+			
+			if(!is_subclass_of($class, 'dw\classes\dwControllerInterface')) {
+				continue;
 			}
 			
+			if(in_array($class, $this -> _controllers)) {
+				continue;
+			}
+			
+			if(self::logger() -> isDebugEnabled()) {
+				self::logger() -> debug("Found new controller $class");
+			}
+			
+			$this -> _controllers[] = $class;
+			
+			$annotations = array();
+			$reflection = new \ReflectionAnnotatedClass($class);
+
+			$annotationsMappingClass = $reflection -> getAnnotations("Mapping");
+			$reflectionMethods = $reflection -> getMethods();
+
+			foreach($reflectionMethods as $reflectionMethod) {
+
+				$class = "class";
+				$fn = $reflectionMethod -> $class."::".$reflectionMethod -> name;
+
+				$annotationsMapping = $reflectionMethod -> getAllAnnotations("Mapping");	
+
+				foreach($annotationsMapping as $mapping) {
+
+					if(count($annotationsMappingClass) > 0) {
+
+						foreach($annotationsMappingClass as $mappingClass) {
+
+							$value = "";
+							if($mappingClass -> getValue()) {
+								$value = $mappingClass -> getValue();
+								if(substr($value, strlen($value) - 1) != "/") {
+									$value .= "/";
+								}
+							}
+
+							$uri = $value.$mapping -> getValue();
+							$method = $mapping -> getMethod()?$mapping -> getMethod():$mappingClass -> getMethod();
+							$consumes = $mapping -> getConsumes()?$mapping -> getConsumes():$mappingClass -> getConsumes();
+							$produces = $mapping -> getProduces()?$mapping -> getProduces():$mappingClass -> getProduces();
+
+							$this -> getRouteMap() -> addRoute(
+								$uri, 
+								$fn, 
+								$method, 
+								$consumes, 
+								$produces);		
+						}
+
+					} else {
+
+						$this -> getRouteMap() -> addRoute(
+							$mapping -> getValue(), 
+							$fn, 
+							$mapping -> getMethod(), 
+							$mapping -> getConsumes(), 
+							$mapping -> getProduces());	
+
+					}
+				}
+			}
 		}
 
 	}

@@ -113,11 +113,11 @@ class dwXMLConfig
 	public static function getAttributes($xmlConfig)
 	{
 		return array(
-				"name" => $xmlConfig -> _name, 
-				"author" => $xmlConfig -> _author, 
-				"version" => $xmlConfig -> _version,
-				"description" => $xmlConfig -> _description,
-				"vars"		  => $xmlConfig -> _vars);	
+			"name" => $xmlConfig -> _name, 
+			"author" => $xmlConfig -> _author, 
+			"version" => $xmlConfig -> _version,
+			"description" => $xmlConfig -> _description,
+			"vars"		  => $xmlConfig -> _vars);	
 	}
 
 	public function __get($svar)

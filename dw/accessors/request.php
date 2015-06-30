@@ -17,12 +17,16 @@ class request
 
 	public static function get($name, $defaultvalue = null, $formatRequestFunction = 'trim')
 	{
-		return ary::get($_REQUEST, $name, $defaultvalue, $formatRequestFunction);
+		return urldecode(ary::get($_REQUEST, $name, $defaultvalue, $formatRequestFunction));
 	}
 	
 	public static function set($name, $mvalue)
 	{
-		ary::set($_REQUEST, $name, $mvalue);
+		ary::set($_REQUEST, $name, urlencode($mvalue));
+	}
+	
+	public static function keyAt($offset) {
+		return ary::keyAt($_REQUEST, $offset);
 	}
 
 	/**

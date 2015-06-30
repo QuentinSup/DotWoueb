@@ -90,5 +90,16 @@ class dwString
 		return stripos($str, $needle) === strlen($str) - strlen($needle);
 	}
 	
+	/**
+	 * Convert a string to a contextual link
+	 * @param str
+	 * return formatted string
+	 */
+	public static function f2link($str) {
+		$link = preg_replace("/[^a-zA-Z 0-9]+/", "", strtolower($str));
+		$link = htmlentities(str_replace(" ", "-", $link));
+		return $link;
+	}
+	
 }
 ?>

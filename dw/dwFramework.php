@@ -156,10 +156,10 @@ class dwFramework
 		unset(self::$_cacheObject[$sid]);
 	}
 	
-	public static function loadApplication($appDir = "./")
+	public static function loadApplication($appDir)
 	{
 		self::$_application = new dwApplication();
-		self::$_application -> loadConfig(DW_WEBINF_DIR);
+		self::$_application -> loadConfig($appDir);
 		return self::$_application;
 	}
 	

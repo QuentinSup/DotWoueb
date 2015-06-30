@@ -3,6 +3,7 @@
 namespace dw\classes;
 
 use dw\accessors\ary;
+use dw\accessors\request;
 use dw\accessors\server;
 
 class dwHttpRequest {
@@ -16,7 +17,10 @@ class dwHttpRequest {
 	public function __construct($uri = null, $method = null, $contentType = null) {
 		
 		if(is_null($uri)) {
-			$uri = server::get('QUERY_STRING');
+			$uri = request::keyAt(0);
+			if($uri == 'PHPSESSID') {
+				$uri = "/";
+			}
 		}
 		
 		if(substr($uri, 0, 1) != "/") {
@@ -55,6 +59,14 @@ class dwHttpRequest {
 		return $this -> _contentType;
 	}
 	
+	public function getRequestParam($varName, $defaultValue = null) {
+		return request::get($varName, $defaultValue);
+	}
+	
+	public function Param($varName, $defaultValue = null) {
+		return $this -> getRequestParam($varName, $defaultValue);
+	}
+	
 	public function setPathVars($pathVars) {
 		$this -> _pathVars = $pathVars;
 	}
@@ -71,8 +83,35 @@ class dwHttpRequest {
 		return $this -> getPathVar($varName, $defaultValue);
 	}
 	
+	public function getScheme() {
+		return server::get('REQUEST_SCHEME');
+	}
+	
 	public function getHostName() {
 		return server::get('SERVER_NAME');
+	}
+	
+	public function getRemoteAddr() {
+		return server::get('REMOTE_ADDR');
+	}
+	
+	public function getContext() {
+		return server::get('CONTEXT_PREFIX');
+	}
+	
+	public function getBaseUri() {
+		return $this -> getScheme().'://'.$this -> getHostName().$this -> getContext()."/";
+	}
+	
+	public function getClientIP() {
+		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+			$ip = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+		return $ip;
 	}
 	
 }

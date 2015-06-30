@@ -4,7 +4,7 @@ namespace dw\accessors;
 
 /**
  * ary (signifie array)
- * G貥 les valeurs d'un tableau associatif
+ * Manage an associative array
  * @author Quentin Supernant
  * @version 1.0
  * @package dotWoueb
@@ -15,6 +15,9 @@ class ary
 
 	public static function get($ary, $name, $defaultvalue = null, $formatRequestFunction = null)
 	{
+		if(is_numeric($name)) {
+			$name = array_keys($ary)[$name];
+		}
 		if(isset($ary[$name]))
 		{
 			if(!is_array($ary[$name]) && !is_null($formatRequestFunction) && function_exists($formatRequestFunction))
@@ -29,6 +32,15 @@ class ary
 	public static function set(&$ary, $name, $mvalue)
 	{
 		$ary[$name] = $mvalue;
+	}
+	
+	public static function keys($ary) {
+		return array_keys($ary);
+	}
+	
+	public static function keyAt($ary, $offset) {
+		$keys = array_keys($ary);
+		return count($keys)>$offset?$keys[$offset]:null;
 	}
 
 	/**
