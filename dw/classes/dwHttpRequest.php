@@ -15,11 +15,11 @@ class dwHttpRequest {
 	protected $_pathVars = array();
 	
 	public function __construct($uri = null, $method = null, $contentType = null) {
-		
+				
 		if(is_null($uri)) {
 
-			$uri = request::keyAt(0);
-			if($uri == 'PHPSESSID') {
+			$uri = ary::get(server::get('argv'), 0);
+			if(!$uri || $uri == 'PHPSESSID') {
 				$uri = "/";
 			}
 
@@ -106,7 +106,7 @@ class dwHttpRequest {
 	}
 	
 	public function getScheme() {
-		return server::get('REQUEST_SCHEME');
+		return server::get('REQUEST_SCHEME', 'http');
 	}
 	
 	public function getHostName() {

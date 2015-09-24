@@ -15,6 +15,9 @@ class ary
 
 	public static function get($ary, $name, $defaultvalue = null, $formatRequestFunction = null)
 	{
+		if(!$ary) {
+			return $defaultvalue;
+		}
 		if(is_numeric($name)) {
 			$name = array_keys($ary)[$name];
 		}

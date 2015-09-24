@@ -123,12 +123,9 @@ class dwRoute {
 		$haystackList = explode("/", $haystack);
 		$needleList = explode("/", $needle);
 
-		if(count($haystackList) != count($needleList)) {
-			return false;
-		}
-				
+		$needleListLength = count($needleList);
 		foreach($haystackList as $index => $value) {
-			$needleValue = $needleList[$index];
+			$needleValue = $needleListLength > $index?$needleList[$index]:null;
 			if(substr($value, 0, 1) == ":") {
 				$var = substr($value, 1);
 				
