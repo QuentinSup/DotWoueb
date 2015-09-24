@@ -11,14 +11,14 @@ class dwRoute {
 	protected $_consumes = null;
 	protected $_produces = null;
 	protected $_routeFn = null;
-	
+		
 	public function __construct($uri, $method, $consumes, $produces) {
 
 		if(substr($uri, 0, 1) != "/") {
 			$uri = "/".$uri;
 		}
 		
-		$this -> _uri 		= $uri;
+		$this -> _uri 		= str_replace("//", "/", $uri);
 		$this -> _method 	= $method?strtoupper($method):null;
 		$this -> _consumes 	= $consumes;
 		$this -> _produces 	= $produces;
@@ -110,6 +110,14 @@ class dwRoute {
 		
 		if($haystack == $needle) {
 			return true;
+		}
+
+		if(substr($haystack, strlen($haystack) - 1) == "/") {
+			$haystack = substr($haystack, 0, strlen($haystack) - 1);
+		}
+		
+		if(substr($needle, strlen($needle) - 1) == "/") {
+			$needle = substr($needle, 0, strlen($needle) - 1);
 		}
 		
 		$haystackList = explode("/", $haystack);
