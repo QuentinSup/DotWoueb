@@ -4,6 +4,7 @@ namespace dw\connectors\dbi;
 
 use dw\classes\dwObject;
 use dw\classes\dwException;
+use dw\classes\dwLogger;
 
 /**
  * G貥 l'interface avec la base de donnees
@@ -97,7 +98,7 @@ class dbi_dataEntity extends dwObject
 	public function get($avalues = null, $bfetch = true)
 	{
 		$do = clone($this);
-		$do -> find($avalues, true);
+		$do -> find($avalues);
 		return $do;
 	}
 	
@@ -116,7 +117,7 @@ class dbi_dataEntity extends dwObject
 	 * Recherche les enregistrements correspondant aux crit貥s courant de l'objet
 	 * 
 	 */
-	public function find($avalues = null, $orderBy = null, $bfetch = true, $ioffset = null, $ilimit = null, $whereAdd = null)
+	public function find($avalues = null, $orderBy = null, $ioffset = null, $ilimit = null, $whereAdd = null, $bfetch = true)
 	{
 		$sorderBy = null;
 		if(!is_null($orderBy))
@@ -143,7 +144,7 @@ class dbi_dataEntity extends dwObject
 	 */
 	public function select($whereAdd = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
-		return $this -> find(null, $orderBy, true, $ioffset, $ilimit, $whereAdd);
+		return $this -> find(null, $orderBy, $ioffset, $ilimit, $whereAdd);
 	}
 	
 	/**
@@ -152,7 +153,7 @@ class dbi_dataEntity extends dwObject
 	 */
 	public function search($avalues = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
-		return $this -> find($avalues, $orderBy, true, $ioffset, $ilimit);
+		return $this -> find($avalues, $orderBy, $ioffset, $ilimit);
 	}
 	
 	public function castSql($svalue)
@@ -556,6 +557,15 @@ class dbi
 	protected static $_bcachingEntityDef = false;
 	protected static $_sentityDefDir = "./";
 	
+	// Logger
+	private static function logger() {
+		static $logger = null;
+		if(is_null($logger)) {
+			$logger = dwLogger::getLogger(__CLASS__);
+		}
+		return $logger;
+	}
+	
   /** 
    * le nom du serveur 
    * @var string 
@@ -842,7 +852,7 @@ class dbi
    * @param string $squery la requete a executer
    * @return dbi_dataSet
    */
-  public function &query($squery, $aparams = array(), $ioffset = null, $ilimit = null, $bescapequery = true, $iwho = 1) 
+  public function query($squery, $aparams = array(), $ioffset = null, $ilimit = null, $bescapequery = true, $iwho = 1) 
   {
  	if($ilimit == 0) 
  	{
@@ -850,6 +860,11 @@ class dbi
  	}
 	  
   	$squery  = $this -> _odb -> prepareQuery($squery, $aparams, $ioffset, $ilimit, $bescapequery);
+  	
+  	if(self::logger() -> isDebugEnabled()) {
+  		self::logger() -> debug($squery);
+  	}
+
   	$idquery = $this -> _startQuery($squery);
   	$ores    = $this -> _odb -> query($squery, $ioffset, $ilimit);
   	if(!$ores === false)
@@ -859,7 +874,8 @@ class dbi
     	return $ods;
   	} else {
   		$this -> _endQuery($idquery, $squery, null, $iwho);
-  		throw new dwException($this -> _odb -> getLastErrorMessage(), E_DBI_QUERY);
+  		return null;
+  		//throw new dwException($this -> _odb -> getLastErrorMessage(), E_DBI_QUERY);
   	}  
   }
 
@@ -903,7 +919,10 @@ class dbi
 				}
 			}
 		}
-
+		if(self::$_bforeachrow && empty($wherePart))
+		{
+			throw new dwException(E_DBI_FOREACHROW);
+		}
 		return $this -> query("SELECT {?} FROM {?} ".$wherePart.(!is_null($squeryEnd)?" ".$squeryEnd:""), array($mselectList, $sentity), $ioffset, $ilimit);
 	}
 	
@@ -1180,8 +1199,8 @@ class dbi
 	  		$adef = $this -> getSchemaTable($stable);
 	  		if(!is_null($adef))
 	  		{
-	  			$classDef = '
-class '.$stable.'Entity extends dw\connectors\dbi\dbi_dataEntity
+	  			$classDef = '	  					
+class '.$stable.'Entity extends dw\\connectors\\dbi\\dbi_dataEntity
 {
 
 	public function __construct($odb)
@@ -1206,7 +1225,7 @@ class '.$stable.'Entity extends dw\connectors\dbi\dbi_dataEntity
 	  			throw new dwException(E_DBI_FACTORY);	
 	  		}
   		}
-	  	$classEntity = $stable.'Entity';
+	  	$classEntity = "\\".$stable.'Entity';
   		$do = new $classEntity($this);
   		if(!is_null($adefaultValues))
   		{

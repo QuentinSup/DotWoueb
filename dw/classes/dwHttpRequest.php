@@ -69,6 +69,26 @@ class dwHttpRequest {
 		return $this -> getRequestParam($varName, $defaultValue);
 	}
 	
+	public function getRequestBody() {
+		static $postdata = null;
+		if(is_null($postdata)) {
+			$postdata = file_get_contents("php://input");
+		}
+		return $postdata;
+	}
+	
+	public function Body() {
+		return $this -> getRequestBody();
+	}
+	
+	public function getPostParam($varName, $defaultValue = null) {
+		return post::get($varName, $defaultValue);
+	}
+	
+	public function Post($varName, $defaultValue = null) {
+		return $this -> getPostParam($varName, $defaultValue);
+	}
+	
 	public function setPathVars($pathVars) {
 		$this -> _pathVars = $pathVars;
 	}

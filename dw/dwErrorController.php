@@ -153,12 +153,25 @@ class dwErrorController
 	}
 	
 	/**
+	 * Appel lors d'une erreur fatale 
+	 * @param exception l'exception
+	 */
+	public static function fatalHandler()
+	{
+		$error = error_get_last();
+		if($error) {
+			self::logger() -> fatal($error['message']." from file ".$error['file']." at line ".$error['line']);
+		}
+	}
+	
+	/**
 	 * Initialise la capture des exceptions et des erreurs
 	 */
 	public static function setHandler()
 	{
         set_error_handler(array('dw\dwErrorController', 'errorHandler'));
 		set_exception_handler(array('dw\dwErrorController', 'exceptionHandler'));
+		register_shutdown_function(array('dw\dwErrorController', 'fatalHandler'));
 	}
 	
 	

@@ -131,11 +131,10 @@ class dwFrontController {
 			}
 		
 		} catch(\Exception $e) {
-						
 			$response -> statusCode = 500;
 			dwErrorController::exceptionHandler($e);
 		}
-		
+
 		$response -> flush();
 		
 	}
