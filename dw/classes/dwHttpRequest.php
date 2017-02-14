@@ -15,15 +15,21 @@ class dwHttpRequest {
 	protected $_pathVars = array();
 	
 	public function __construct($uri = null, $method = null, $contentType = null) {
-				
+
 		if(is_null($uri)) {
 
 			$uri = ary::get(server::get('argv'), 0);
 			if(!$uri || $uri == 'PHPSESSID') {
-				$uri = "/";
+				$uri = request::keyAt(0);
 			}
-
+			
 		}
+		
+		if(!$uri) {
+			$uri = "/";
+		}
+
+		$uri = urldecode($uri);
 		
 		if(substr($uri, 0, 1) != "/") {
 			$uri = "/".$uri;
@@ -102,7 +108,7 @@ class dwHttpRequest {
 	}
 	
 	public function Path($varName, $defaultValue = null) {
-		return $this -> getPathVar($varName, $defaultValue);
+		return urldecode($this -> getPathVar($varName, $defaultValue));
 	}
 	
 	public function getScheme() {
