@@ -14,10 +14,8 @@ class dwRoute {
 		
 	public function __construct($uri, $method, $consumes, $produces) {
 
-		if(substr($uri, 0, 1) != "/") {
-			$uri = "/".$uri;
-		}
-		
+		$uri = "/".$uri."/";
+
 		$this -> _uri 		= str_replace("//", "/", $uri);
 		$this -> _method 	= $method?strtoupper($method):null;
 		$this -> _consumes 	= $consumes;
