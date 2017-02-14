@@ -33,7 +33,7 @@ class dwHttpRequest {
 			$method = server::get('REQUEST_METHOD');	
 		}
 		if(is_null($contentType)) {
-			$contentType = server::get('HTTP_ACCEPT');	
+			$contentType = server::get('CONTENT_TYPE');	
 		}
 		
 		$this -> _requestUri = $uri;
