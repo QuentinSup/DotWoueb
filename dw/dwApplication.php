@@ -403,7 +403,7 @@ class dwApplication extends dwXMLConfig
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Dispatch user from uri: ".$request -> getRequestUri().", method: ".$request -> getMethod().", consumes: ".$request -> getContentType());
 		}
-		
+
 		$route = $this -> getRouteMap() -> searchRoute($request -> getRequestUri(), $request -> getMethod(), $request -> getContentType(), $pathVars);
 	
 		$request -> setPathVars($pathVars);
