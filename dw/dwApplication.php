@@ -5,6 +5,7 @@ namespace dw;
 use dw\dwFramework as dw;
 use dw\dwListeners;
 use dw\dwPlugins;
+use dw\dwAnnotations;
 use dw\classes\dwXMLConfig;
 use dw\helpers\dwString;
 use dw\helpers\dwFile;
@@ -15,9 +16,6 @@ use dw\classes\dwLogger;
 use dw\classes\dwHttpRequest;
 
 define('E_APP_LOAD', "001");
-
-dw_require('vendors/addendum/annotations');
-dw_require('annotations/Mapping');
 
 /**
  * Manage application
@@ -287,10 +285,12 @@ class dwApplication extends dwXMLConfig
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Initialize controllers");
 		}
-		
+
 		self::includeOnceDirectory(DW_CONTROLLERS_DIR);
 		
-		$this -> loadControllersMapping();
+		dwAnnotations::load();
+		
+		$this -> loadControllers();
 		
 	}
 	
@@ -300,20 +300,22 @@ class dwApplication extends dwXMLConfig
 	 */
 	public static function includeOnceDirectory($dir) {
 		$list = dwFile::ls($dir);
+		$loaded = array();
 		foreach($list as $file) {
 
 			if(!is_dir($file)) {
-							
+				$loaded[] = $file;
 				include_once($file);
 			
 			}
-		}	
+		}
+		return $loaded;
 	}
 	
 	/**
 	 * Take a look into declared classes to identify Controllers and set mapping
 	 */
-	public function loadControllersMapping() {
+	public function loadControllers() {
 
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Load controllers from declared classes and set mapping");
@@ -336,58 +338,8 @@ class dwApplication extends dwXMLConfig
 			
 			$this -> _controllers[] = $class;
 			
-			$annotations = array();
-			$reflection = new \ReflectionAnnotatedClass($class);
-
-			$annotationsMappingClass = $reflection -> getAnnotations("Mapping");
-			$reflectionMethods = $reflection -> getMethods();
-
-			foreach($reflectionMethods as $reflectionMethod) {
-
-				$class = "class";
-				$fn = $reflectionMethod -> $class."::".$reflectionMethod -> name;
-
-				$annotationsMapping = $reflectionMethod -> getAllAnnotations("Mapping");	
-
-				foreach($annotationsMapping as $mapping) {
-
-					if(count($annotationsMappingClass) > 0) {
-
-						foreach($annotationsMappingClass as $mappingClass) {
-
-							$value = "";
-							if($mappingClass -> getValue()) {
-								$value = $mappingClass -> getValue();
-								if(substr($value, strlen($value) - 1) != "/") {
-									$value .= "/";
-								}
-							}
-
-							$uri = $value.$mapping -> getValue();
-							$method = $mapping -> getMethod()?$mapping -> getMethod():$mappingClass -> getMethod();
-							$consumes = $mapping -> getConsumes()?$mapping -> getConsumes():$mappingClass -> getConsumes();
-							$produces = $mapping -> getProduces()?$mapping -> getProduces():$mappingClass -> getProduces();
-
-							$this -> getRouteMap() -> addRoute(
-								$uri, 
-								$fn, 
-								$method, 
-								$consumes, 
-								$produces);		
-						}
-
-					} else {
-
-						$this -> getRouteMap() -> addRoute(
-							$mapping -> getValue(), 
-							$fn, 
-							$mapping -> getMethod(), 
-							$mapping -> getConsumes(), 
-							$mapping -> getProduces());	
-
-					}
-				}
-			}
+			dwAnnotations::process($this, $class);
+			
 		}
 
 	}
