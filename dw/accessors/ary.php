@@ -18,8 +18,11 @@ class ary
 		if(!$ary) {
 			return $defaultvalue;
 		}
-		if(is_numeric($name)) {
-			$name = array_keys($ary)[$name];
+		if(is_numeric($name) && is_assoc($ary)) {
+			$keys = array_keys($ary);
+			if($name < count($keys)) {
+				$name = $keys[$name];	
+			}
 		}
 		if(isset($ary[$name]))
 		{
