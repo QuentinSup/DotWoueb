@@ -188,15 +188,15 @@ class dwFramework
 		if(!defined('DW_VENDORS_DIR')) 		define("DW_VENDORS_DIR", DW_BASE_DIR."vendors/");
 		if(!defined('DW_SMARTY_DIR')) 		define("DW_SMARTY_DIR", DW_VENDORS_DIR."Smarty/");
 
-		if(!defined('DW_LISTENERS_DIR'))	define('DW_LISTENERS_DIR', "./listeners/");
-		if(!defined('DW_CONTROLLERS_DIR'))  define("DW_CONTROLLERS_DIR", "./controllers/");
-		if(!defined('DW_WEBINF_DIR'))		define("DW_WEBINF_DIR", "./web-inf/");
-		if(!defined('DW_APP_NS'))			define("DW_APP_DIR", basename(realpath(".")));
+		if(!defined('DW_LISTENERS_DIR'))	define('DW_LISTENERS_DIR', APP_DIR."listeners/");
+		if(!defined('DW_CONTROLLERS_DIR'))  define("DW_CONTROLLERS_DIR", APP_DIR."controllers/");
+		if(!defined('DW_WEBINF_DIR'))		define("DW_WEBINF_DIR", APP_DIR."web-inf/");
+		if(!defined('DW_APP_NS'))			define("DW_APP_NS", basename(realpath(".")));
 
 		if(!defined('DW_RUNTIME_DIR'))		define("DW_RUNTIME_DIR", DW_WEBINF_DIR."runtime/");
 		if(!defined('DW_CACHE_DIR'))		define("DW_CACHE_DIR", DW_RUNTIME_DIR."cache/");
-		if(!defined('DW_TRADUCER_DIR'))		define("DW_TRADUCER_DIR", "./traduce/");
-		if(!defined('DW_DBI_ENTITYDEF_DIR'))define("DW_DBI_ENTITYDEF_DIR", "./entity/");
+		if(!defined('DW_TRADUCER_DIR'))		define("DW_TRADUCER_DIR", APP_DIR."traduce/");
+		if(!defined('DW_DBI_ENTITYDEF_DIR'))define("DW_DBI_ENTITYDEF_DIR", APP_DIR."entity/");
 				
 		dw_require("classes/dwLogger");
 		dw_require("classes/dwAutoLoader");

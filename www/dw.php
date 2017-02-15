@@ -3,8 +3,6 @@
 ini_set("magic_quotes_gpc", "0");
 ini_set("short_open_tag", "1");
 
-session_start();
-
 date_default_timezone_set('Europe/Paris');
 
 define("WORK_PATH", dirname(__FILE__));
@@ -16,7 +14,6 @@ dw\dwFramework::load();
 
 use dw\dwFramework as dw;
 use dw\connectors\dbi\dbi;
-use dw\classes\dwXMLConfig;
 use dw\dwConnectors;
 use dw\dwErrorController;
 use dw\classes\dwCacheFile;
