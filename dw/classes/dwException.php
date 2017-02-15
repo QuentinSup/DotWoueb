@@ -18,10 +18,11 @@ namespace dw\classes;
 	 * @param string $smsg Message initial de l'exception
 	 * @param string $susermsg Message personnalis頤estin頠 l'utilisateur
 	 */
-	public function __construct($smsg, $susermsg = '')
+	public function __construct($smsg, $susermsg = '', $e = null)
 	{
-		parent::__construct($smsg);
+		parent::__construct($smsg, null, $e);
 		$this -> _susermessage = $susermsg;
+		dwException::raise($this);
 	}
 
 	/**

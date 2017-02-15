@@ -6,10 +6,9 @@ use dw\dwFramework as dw;
 use dw\dwListeners;
 use dw\dwPlugins;
 use dw\dwAnnotations;
+use dw\classes\dwException;
 use dw\classes\dwXMLConfig;
-use dw\helpers\dwString;
 use dw\helpers\dwFile;
-use dw\accessors\server;
 use dw\accessors\ary;
 use dw\classes\dwRouteMap;
 use dw\classes\dwLogger;
@@ -44,7 +43,8 @@ class dwApplication extends dwXMLConfig
 	/**
 	 * Constructeur
 	 */
-	public function __construct() {
+	public function __construct($namespace = "") {
+		$this -> _namespace = $namespace;
 		$this -> _routemap = new dwRouteMap();
 		//$this -> logger = \Logger::getLogger("main");
 	}
@@ -68,13 +68,13 @@ class dwApplication extends dwXMLConfig
 	public function getListeners()	{ return $this -> _listeners; }
 	/**
 	 * getRunMode()
-	 * Renvoi l'鴡t d'ex飵tion (0:Debug; 1:Release)
+	 * Renvoi l'état d'execution (0:Debug; 1:Release)
 	 * @return int
 	 */
 	public function getRunMode()	{ return $this -> _runmode; }
 	
 	/**
-	 * Retourne la langue de l'application par d馡ut
+	 * Retourne la langue de l'application par défaut
 	 * @return La langue
 	 */
 	public function getLang()		{ return $this -> _lang; }
@@ -133,11 +133,11 @@ class dwApplication extends dwXMLConfig
 	
 	/**
 	 * loadConfig()
-	 * Charge les param贲es de l'application contenus dans un fichier XML
-	 * @author Quentin Supernant
-	 * @param string $scurpath Chemin ou se trouve le fichier XML
-	 * @param string $sencoding Le type d'encodate du fichier XML (par défaut 'ISO-8859-1')
-	 * @param string $sxml Le nom du fichier XML (par défaut 'config.xml')
+	 * Load configuration from XML file
+	 * @author QuentinSup
+	 * @param string $scurpath Path to the config XML file
+	 * @param string $sencoding encoding (default is 'ISO-8859-1')
+	 * @param string $sxml the config filename (default is 'config.xml')
 	 */
 	public function loadConfig($scurpath = './', $sxml = 'config.xml', $sencoding = 'ISO-8859-1')
 	{
@@ -264,6 +264,9 @@ class dwApplication extends dwXMLConfig
 		return $ary;	
 	}
 	
+	/**
+	 * 
+	 */
 	public function prepare() {
 		
 		if(self::logger() -> isInfoEnabled()) {
@@ -286,10 +289,8 @@ class dwApplication extends dwXMLConfig
 			self::logger() -> info("Initialize controllers");
 		}
 
-		self::includeOnceDirectory(DW_CONTROLLERS_DIR);
-		
 		dwAnnotations::load();
-		
+
 		$this -> loadControllers();
 		
 	}
@@ -317,39 +318,61 @@ class dwApplication extends dwXMLConfig
 	 */
 	public function loadControllers() {
 
+		// Load from app directory
+		self::includeOnceDirectory(DW_CONTROLLERS_DIR);
+		
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Load controllers from declared classes and set mapping");
 		}
 		
 		$classes = get_declared_classes();
+		
 		foreach($classes as $class) {
+
+			// Controller
+			if(is_subclass_of($class, 'dw\classes\dwControllerInterface')) {
+
+				if(in_array($class, $this -> _controllers)) {
+					
+					if(self::logger() -> isWarnEnabled()) {
+						self::logger() -> warn("Controller $class already exists");
+					}
+					
+					continue;
+				}
 			
-			if(!is_subclass_of($class, 'dw\classes\dwControllerInterface')) {
-				continue;
+				if(self::logger() -> isDebugEnabled()) {
+					self::logger() -> debug("Found new controller $class");
+				}
+				
+				$this -> _controllers[] = $class;
+				
+				// Process annotations
+				dwAnnotations::process($this, $class);
+				
 			}
 			
-			if(in_array($class, $this -> _controllers)) {
-				continue;
+			// Listener
+			if(is_subclass_of($class, 'dw\classes\dwListenerInterface')) {
+
+				// Process annotations
+				dwAnnotations::process($this, $class);
 			}
-			
-			if(self::logger() -> isDebugEnabled()) {
-				self::logger() -> debug("Found new controller $class");
-			}
-			
-			$this -> _controllers[] = $class;
-			
-			dwAnnotations::process($this, $class);
 			
 		}
 
 	}
-	
+
 	/**
 	 * Dispatch user to the specified route
+	 * @param $uri to dispatch (optional)
+	 * @param $method of the request (optional)
+	 * @param $consumes the contentType to consume (optional)
 	 */
 	public function dispatch($uri = null, $method = null, $consumes = null) {
 
 		$request = new dwHttpRequest($uri, $method, $consumes);
+		
 		$pathVars = array();
 
 		if(self::logger() -> isInfoEnabled()) {

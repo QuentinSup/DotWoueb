@@ -156,10 +156,10 @@ class dwFramework
 		unset(self::$_cacheObject[$sid]);
 	}
 	
-	public static function loadApplication($appDir)
+	public static function loadApplication($namespace)
 	{
-		self::$_application = new dwApplication();
-		self::$_application -> loadConfig($appDir);
+		self::$_application = new dwApplication($namespace);
+		self::$_application -> loadConfig(DW_WEBINF_DIR);
 		return self::$_application;
 	}
 	
@@ -191,6 +191,8 @@ class dwFramework
 		if(!defined('DW_LISTENERS_DIR'))	define('DW_LISTENERS_DIR', "./listeners/");
 		if(!defined('DW_CONTROLLERS_DIR'))  define("DW_CONTROLLERS_DIR", "./controllers/");
 		if(!defined('DW_WEBINF_DIR'))		define("DW_WEBINF_DIR", "./web-inf/");
+		if(!defined('DW_APP_NS'))			define("DW_APP_DIR", basename(realpath(".")));
+
 		if(!defined('DW_RUNTIME_DIR'))		define("DW_RUNTIME_DIR", DW_WEBINF_DIR."runtime/");
 		if(!defined('DW_CACHE_DIR'))		define("DW_CACHE_DIR", DW_RUNTIME_DIR."cache/");
 		if(!defined('DW_TRADUCER_DIR'))		define("DW_TRADUCER_DIR", "./traduce/");

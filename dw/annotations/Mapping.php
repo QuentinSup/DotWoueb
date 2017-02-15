@@ -42,22 +42,25 @@ class Mapping extends Annotation {
 	 * 
 	 * @param unknown $class
 	 */
-	public static function process($app, $fn, $mappingClass, $mappingMethod) {
+	public static function processMethod($app, $reflection, $reflectionMethod, $annotationsClass, $annotationsMethod) {
 		
-		if($mappingClass) {
+		$classMethod = "class";
+		$fn = $reflectionMethod -> $classMethod."::".$reflectionMethod -> name;
+		
+		if($annotationsClass) {
 		
 			$value = "";
-			if($mappingClass -> getValue()) {
-				$value = $mappingClass -> getValue();
+			if($annotationsClass -> getValue()) {
+				$value = $annotationsClass -> getValue();
 				if(substr($value, strlen($value) - 1) != "/") {
 					$value .= "/";
 				}
 			}
 				
-			$uri = $value.$mappingMethod -> getValue();
-			$method = $mappingMethod -> getMethod()?$mappingMethod -> getMethod():$mappingClass -> getMethod();
-			$consumes = $mappingMethod -> getConsumes()?$mappingMethod -> getConsumes():$mappingClass -> getConsumes();
-			$produces = $mappingMethod -> getProduces()?$mappingMethod -> getProduces():$mappingClass -> getProduces();
+			$uri = $value.$annotationsMethod -> getValue();
+			$method = $annotationsMethod -> getMethod()?$annotationsMethod -> getMethod():$annotationsClass -> getMethod();
+			$consumes = $annotationsMethod -> getConsumes()?$annotationsMethod -> getConsumes():$annotationsClass -> getConsumes();
+			$produces = $annotationsMethod -> getProduces()?$annotationsMethod -> getProduces():$annotationsClass -> getProduces();
 				
 			$app -> getRouteMap() -> addRoute(
 					$uri,
@@ -68,11 +71,11 @@ class Mapping extends Annotation {
 		} else {
 
 			$app -> getRouteMap() -> addRoute(
-					$mappingMethod -> getValue(),
+					$annotationsMethod -> getValue(),
 					$fn,
-					$mappingMethod -> getMethod(),
-					$mappingMethod -> getConsumes(),
-					$mappingMethod -> getProduces());
+					$annotationsMethod -> getMethod(),
+					$annotationsMethod -> getConsumes(),
+					$annotationsMethod -> getProduces());
 		}
 	}
 	

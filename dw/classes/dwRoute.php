@@ -11,6 +11,7 @@ class dwRoute {
 	protected $_consumes = null;
 	protected $_produces = null;
 	protected $_routeFn = null;
+	protected $_deep = null;
 		
 	public function __construct($uri, $method, $consumes, $produces) {
 
@@ -20,6 +21,7 @@ class dwRoute {
 		$this -> _method 	= $method?strtoupper($method):null;
 		$this -> _consumes 	= $consumes;
 		$this -> _produces 	= $produces;
+		$this -> _deep		= mb_substr_count($this -> _uri, "/") ;
 	}
 	
 	public function setRouteFunction($routeFn) {
@@ -44,6 +46,10 @@ class dwRoute {
 	
 	public function getProduces() {
 		return $this -> _produces;
+	}
+	
+	public function getDeep() {
+		return $this -> _deep;
 	}
 		
 	public function getScore() {

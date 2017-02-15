@@ -2,7 +2,9 @@
 
 namespace dw;
 
-use dw\classes\dwPlugin;
+use dw\classes\dwHttpRequest;
+use dw\classes\dwHttpResponse;
+use dw\classes\dwModel;
 
 define('E_PLUG_LOAD', 100);
 define('E_PLUG_UNKNOW', 101);
@@ -73,11 +75,11 @@ class dwPlugins {
 		}
 	}
 	
-	public static function forAllPluginsDo($sfunction, $aparams = null)
+	public static function forAllPluginsDo($sfunction, dwHttpRequest $request, dwHttpResponse $response, dwModel $model)
 	{
 		foreach(self::$_aPluginLoaded as $plugin)
 		{
-			$plugin -> $sfunction($aparams);
+			$plugin -> $sfunction($request, $response, $model);
 		}
 	}
 	

@@ -5,6 +5,9 @@ namespace dw;
 use dw\dwFramework as dw;
 use dw\classes\dwLogger;
 use dw\classes\dwException;
+use dw\classes\dwHttpRequest;
+use dw\classes\dwHttpResponse;
+use dw\classes\dwModel;
 
 define('E_LISTENER_UNKNOW', 101);
 
@@ -90,11 +93,11 @@ class dwListeners {
 		}
 	}
 	
-	public static function forAllListenersDo($sfunction, $aparams = null)
+	public static function forAllListenersDo($sfunction, dwHttpRequest $request, dwHttpResponse $response, dwModel $model)
 	{
 		foreach(self::$_aLoaded as $listener)
 		{
-			if($listener -> $sfunction($aparams) === false) {
+			if($listener -> $sfunction($request, $response, $model) === false) {
 				return false;
 			}
 		}

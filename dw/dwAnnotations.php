@@ -32,39 +32,47 @@ class dwAnnotations {
 		$reflection = new \ReflectionAnnotatedClass($class);
 		
 		foreach(dwAnnotations::$_annotations as $annotationName) {
-		
-			$annotationsMappingClass = $reflection -> getAnnotations($annotationName);
+	
+			$fnAnnotationMethod = "\\".$annotationName."::processMethod";
+			$fnAnnotationProperty = "\\".$annotationName."::processProperty";
+			
+			$annotationsClass = $reflection -> getAnnotations($annotationName);
+			
 			$reflectionMethods = $reflection -> getMethods();
+			$reflectionProperties = $reflection -> getProperties();
+
+			foreach($reflectionProperties as $reflectionProperty) {
+				
+				$annotationsProperty = $reflectionProperty -> getAllAnnotations($annotationName);
+				foreach($annotationsProperty as $annotationProperty) {
+
+					if(count($annotationsClass) > 0) {
+							
+						foreach($annotationsClass as $annotationClass) {
+							eval($fnAnnotationProperty.'($app, $reflection, $reflectionProperty, $annotationClass, $annotationProperty);');
+						}
+							
+					} else {
+						eval($fnAnnotationProperty.'($app, $reflection, $reflectionProperty, null, $annotationProperty);');
+					}
+					
+				}
+			}
 			
 			foreach($reflectionMethods as $reflectionMethod) {
 			
-				$classMethod = "class";
-				$fn = $reflectionMethod -> $classMethod."::".$reflectionMethod -> name;
-				
-	
-				
-				$fnAnnotation = "\\".$annotationName."::process";
-				
-				
-				
-				$annotationsMapping = $reflectionMethod -> getAllAnnotations($annotationName);
+				$annotationsMethod = $reflectionMethod -> getAllAnnotations($annotationName);
 			
-				foreach($annotationsMapping as $mapping) {
+				foreach($annotationsMethod as $annotationMethod) {
 			
-					if(count($annotationsMappingClass) > 0) {
+					if(count($annotationsClass) > 0) {
 			
-						foreach($annotationsMappingClass as $mappingClass) {
-
-							
-							
-							eval($fnAnnotation.'($app, $fn, $mappingClass, $mapping);');
-
+						foreach($annotationsClass as $annotationClass) {
+							eval($fnAnnotationMethod.'($app, $reflection, $reflectionMethod, $annotationClass, $annotationMethod);');
 						}
 			
 					} else {
-						
-						eval($fnAnnotation.'($app, $fn, null, $mapping);');
-						
+						eval($fnAnnotationMethod.'($app, $reflection, $reflectionMethod, null, $annotationMethod);');
 					}
 				}
 			}

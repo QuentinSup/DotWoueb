@@ -14,9 +14,9 @@ interface dwPluginInterface
 	public function install();
 	public function uninstall();
 	public function prepare();
-	public function prepareRequest(dwHttpRequest $request);
-	public function processRequest(dwHttpRequest $request);
-	public function terminateRequest(dwHttpRequest $request);
+	public function prepareRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
+	public function processRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
+	public function terminateRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
 }
 
 abstract class dwPlugin extends dwXMLConfig implements dwPluginInterface
@@ -25,9 +25,9 @@ abstract class dwPlugin extends dwXMLConfig implements dwPluginInterface
 	
 	public function install() {}
 	public function uninstall() {}
-	public function prepareRequest(dwHttpRequest $request) {}
-	public function processRequest(dwHttpRequest $request) {}
-	public function terminateRequest(dwHttpRequest $request) {}
+	public function prepareRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model) {}
+	public function processRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model) {}
+	public function terminateRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model) {}
 	
 	public function __construct($sname = null)
 	{

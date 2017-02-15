@@ -12,9 +12,9 @@ namespace dw\classes;
 interface dwListenerInterface 
 {
 	public function init();
-	public function prepareRequest();
-	public function processRequest();
-	public function terminateRequest();
+	public function prepareRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
+	public function processRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
+	public function terminateRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
 }
 
 ?>
