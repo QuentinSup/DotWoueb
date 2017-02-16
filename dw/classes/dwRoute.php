@@ -15,13 +15,24 @@ class dwRoute {
 		
 	public function __construct($uri, $method, $consumes, $produces) {
 
-		$uri = "/".$uri."/";
 
-		$this -> _uri 		= str_replace("//", "/", $uri);
+		$this -> _uri = self::smoothuri($uri);
+		
 		$this -> _method 	= $method?strtoupper($method):null;
 		$this -> _consumes 	= $consumes;
 		$this -> _produces 	= $produces;
 		$this -> _deep		= mb_substr_count($this -> _uri, "/") ;
+	}
+	
+	
+	public static function smoothuri($uri) {
+		$uri = "/".$uri."/";
+		
+		do {
+			$uri = str_replace("//", "/", $uri, $count);
+		} while($count);
+		
+		return $uri;
 	}
 	
 	public function setRouteFunction($routeFn) {
@@ -102,8 +113,9 @@ class dwRoute {
 								   							   
 	public static function isConsumesMatch($haystack, $needle) {
 		$ary = explode(",", $haystack);
+		$needleType = explode(";", $needle)[0];
 		foreach($ary as $value) {
-			if($value == $needle) {
+			if($value == $needleType) {
 				return true;
 			}
 		}	
@@ -128,6 +140,12 @@ class dwRoute {
 		$needleList = explode("/", $needle);
 
 		$needleListLength = count($needleList);
+		$haystackListLength = count($haystackList);
+		
+		if($needleListLength > $haystackListLength) {
+			return false;
+		}
+		
 		foreach($haystackList as $index => $value) {
 			$needleValue = $needleListLength > $index?$needleList[$index]:null;
 			if(substr($value, 0, 1) == ":") {

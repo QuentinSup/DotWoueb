@@ -13,27 +13,18 @@ class dwHttpRequest {
 	protected $_contentType = null;
 	protected $_route = null;
 	protected $_pathVars = array();
+	protected $_headers = array();
 	
 	public function __construct($uri = null, $method = null, $contentType = null) {
 
 		if(is_null($uri)) {
-
-			$uri = ary::get(server::get('argv'), 0);
-			if(!$uri || $uri == 'PHPSESSID') {
-				$uri = request::keyAt(0);
-			}
-			
-		}
-		
-		if(!$uri) {
-			$uri = "/";
+			// build $uri
+			$prefix = server::get('CONTEXT_PREFIX');
+			$uri = explode('?', server::get('REQUEST_URI'))[0];
+			$uri = substr($uri, strlen($prefix));
 		}
 
-		$uri = urldecode($uri);
-		
-		if(substr($uri, 0, 1) != "/") {
-			$uri = "/".$uri;
-		}
+		$uri = dwRoute::smoothuri(urldecode($uri));
 		
 		if(is_null($method)) {
 			$method = server::get('REQUEST_METHOD');	
@@ -42,9 +33,11 @@ class dwHttpRequest {
 			$contentType = server::get('CONTENT_TYPE');	
 		}
 		
-		$this -> _requestUri = $uri;
-		$this -> _method = $method;
-		$this -> _contentType = $contentType;
+		$this -> _requestUri 	= $uri;
+		$this -> _method 		= $method;
+		$this -> _contentType 	= $contentType;
+		$this -> _headers 		= getallheaders();
+
 	}
 	
 	public function setRoute($route) {
@@ -71,10 +64,7 @@ class dwHttpRequest {
 		return request::get($varName, $defaultValue);
 	}
 	
-	public function Param($varName, $defaultValue = null) {
-		return $this -> getRequestParam($varName, $defaultValue);
-	}
-	
+
 	public function getRequestBody() {
 		static $postdata = null;
 		if(is_null($postdata)) {
@@ -83,16 +73,12 @@ class dwHttpRequest {
 		return $postdata;
 	}
 	
-	public function Body() {
-		return $this -> getRequestBody();
+	public function isJSONContent() {
+		return $this -> _contentType && (strpos(strtolower($this -> _contentType), "application/json") != -1);
 	}
 	
 	public function getPostParam($varName, $defaultValue = null) {
 		return post::get($varName, $defaultValue);
-	}
-	
-	public function Post($varName, $defaultValue = null) {
-		return $this -> getPostParam($varName, $defaultValue);
 	}
 	
 	public function setPathVars($pathVars) {
@@ -106,11 +92,7 @@ class dwHttpRequest {
 	public function getPathVar($varName, $defaultValue = null) {
 		return ary::get($this -> _pathVars, $varName, $defaultValue);
 	}
-	
-	public function Path($varName, $defaultValue = null) {
-		return urldecode($this -> getPathVar($varName, $defaultValue));
-	}
-	
+
 	public function getScheme() {
 		return server::get('REQUEST_SCHEME', 'http');
 	}
@@ -127,6 +109,10 @@ class dwHttpRequest {
 		return server::get('CONTEXT_PREFIX');
 	}
 	
+	public function getProtocol() {
+		return server::get('SERVER_PROTOCOL');
+	}
+	
 	public function getBaseUri() {
 		return $this -> getScheme().'://'.$this -> getHostName().$this -> getContext()."/";
 	}
@@ -140,6 +126,38 @@ class dwHttpRequest {
 			$ip = $_SERVER['REMOTE_ADDR'];
 		}
 		return $ip;
+	}
+	
+	public function getHeader($name, $defaultValue = null) {
+		 return ary::get($this -> _headers, $name, $defaultValue);
+	}
+	
+	public function isHeaderExists($name) {
+		return isset($this -> _headers[$name]);
+	}
+	
+	public function Body() {
+		$body = $this -> getRequestBody();
+		if($this -> isJSONContent()) {
+			return json_decode($body);
+		}
+		return $body;
+	}
+	
+	public function Path($varName, $defaultValue = null) {
+		return urldecode($this -> getPathVar($varName, $defaultValue));
+	}
+	
+	public function Post($varName, $defaultValue = null) {
+		return $this -> getPostParam($varName, $defaultValue);
+	}
+	
+	public function Param($varName, $defaultValue = null) {
+		return $this -> getRequestParam($varName, $defaultValue);
+	}
+	
+	public function Header($varName, $defaultValue = null) {
+		return $this -> getHeader($varName, $defaultValue);
 	}
 	
 }
