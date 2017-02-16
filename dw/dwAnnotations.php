@@ -2,7 +2,7 @@
 
 namespace dw;
 
-use dw\dwApplication;
+use dw\dwFramework as dw;
 use dw\helpers\dwFile;
 
 dw_require('vendors/addendum/annotations');
@@ -16,8 +16,8 @@ class dwAnnotations {
 	
 	protected static $_annotations = array();
 	
-	public static function load() {
-		$annotationFiles = dwApplication::includeOnceDirectory(DW_BASE_DIR."annotations/");
+	public static function load($dir) {
+		$annotationFiles = dw::includeOnceDirectory($dir);
 		foreach($annotationFiles as $file) {
 			dwAnnotations::$_annotations[] = dwFile::getAbsoluteName($file);
 		}

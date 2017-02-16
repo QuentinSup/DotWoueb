@@ -5,8 +5,8 @@ namespace dw;
 use dw\classes\dwHttpRequest;
 use dw\classes\dwHttpResponse;
 use dw\classes\dwModel;
-use dw\views\dwTemplateView;
 use dw\views\dwTextView;
+use dw\views\dwJsonView;
 use dw\classes\dwException;
 use dw\dwFramework as dw;
 
@@ -88,29 +88,39 @@ class dwFrontController {
 							}
 	
 							if(is_string($view)) {
+								
 								if(strpos($view, 'redirect:') === 0) {
 									$url = substr($view, 9);
 									header("Location: $url");
 									die;
 								}
 								
-								if(strpos($view, 'view:') === 0) {
-									$view = new dwTemplateView(substr($view, 5));
-									$modelAttributes = $model -> toArray();
-									$view -> setModel($modelAttributes);	
+								$ipos = strpos($view, ":");
+								if($ipos) {
+									$callerName = substr($view, 0, $ipos);
+									$viewContent = substr($view, $ipos + 1);
+									$viewClass = dw::App() -> getClassView($callerName);
+									if(!$viewClass) {
+										throw new dwException("'$callerName' cannot be interpreted as a view");
+									}
+									$view = new $viewClass($viewContent);
 								} else {
 									$view = new dwTextView($view);
 								}
-	
+								
 							} elseif(!$view) {
 								$view = new dwTextView("");	
+							} elseif(is_array($view)) {
+								if($response -> isJSONContent()) {
+									$view = new dwJsonView($view);
+								}
 							}
-	
-							$response -> setContent($view -> render());
-					
+
 							if(!is_subclass_of($view, 'dw\classes\dwViewInterface')) {
-								throw new dwException("Les retours doivent hériter de dwViewInterface");	
+								throw new dwException("The return value of controller must inherits dwViewInterface");	
 							}
+							
+							$response -> setContent($view -> render($model -> toArray()));
 				
 						}
 					}

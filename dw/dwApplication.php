@@ -8,7 +8,6 @@ use dw\dwPlugins;
 use dw\dwAnnotations;
 use dw\classes\dwException;
 use dw\classes\dwXMLConfig;
-use dw\helpers\dwFile;
 use dw\accessors\ary;
 use dw\classes\dwRouteMap;
 use dw\classes\dwLogger;
@@ -30,6 +29,7 @@ class dwApplication extends dwXMLConfig
 	protected $_properties = array();
 	protected $_namespace = "";
 	protected $_controllers = array();
+	protected $_views = array();
 	
 	// Logger
 	private static function logger() {
@@ -282,44 +282,24 @@ class dwApplication extends dwXMLConfig
 		foreach($this -> _connectors as $connector) {
 			$connector -> prepare();
 		}
-		
-		// Initialize controllers and mapping
-		
-		if(self::logger() -> isInfoEnabled()) {
-			self::logger() -> info("Initialize controllers");
-		}
-
-		dwAnnotations::load();
 
 		$this -> loadControllers();
 		
 	}
-	
-	/**
-	 * Try to include all files from a directory
-	 * $dir The directory to scan
-	 */
-	public static function includeOnceDirectory($dir) {
-		$list = dwFile::ls($dir);
-		$loaded = array();
-		foreach($list as $file) {
-
-			if(!is_dir($file)) {
-				$loaded[] = $file;
-				include_once($file);
-			
-			}
-		}
-		return $loaded;
-	}
-	
+		
 	/**
 	 * Take a look into declared classes to identify Controllers and set mapping
 	 */
 	public function loadControllers() {
 
+		// Initialize controllers and mapping
+		
+		if(self::logger() -> isInfoEnabled()) {
+			self::logger() -> info("Initialize controllers");
+		}
+		
 		// Load from app directory
-		self::includeOnceDirectory(DW_CONTROLLERS_DIR);
+		dw::includeOnceDirectory(DW_CONTROLLERS_DIR);
 		
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Load controllers from declared classes and set mapping");
@@ -358,9 +338,27 @@ class dwApplication extends dwXMLConfig
 				// Process annotations
 				dwAnnotations::process($this, $class);
 			}
+						
+			// View
+			if(is_subclass_of($class, 'dw\classes\dwViewInterface')) {
+
+				$callerName = $class::getCallerName();
+				if($callerName) {
+					
+					if(self::logger() -> isDebugEnabled()) {
+						self::logger() -> debug("Found view interface $callerName");
+					}
+					
+					$this -> _views[$callerName] = $class;
+				}
+			}
 			
 		}
 
+	}
+	
+	public function getClassView($callerName) {
+		return ary::get($this -> _views, $callerName);
 	}
 
 	/**

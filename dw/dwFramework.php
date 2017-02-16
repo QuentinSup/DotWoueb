@@ -10,10 +10,11 @@ define("DW_DEFAULT_ENCODING", "ISO-8859-1");
 
 use dw\connectors\dbi\dbi;
 use dw\accessors\server;
-use dw\classes\dwException;
 use dw\classes\dwLogger;
 use dw\classes\AutoLoader;
 use dw\classes\dwHttpRequest;
+use dw\helpers\dwFile;
+use dw\dwFrontController;
 
 /**
  * Classe principale du framework (toutes les fonctions sont statiques)
@@ -185,6 +186,8 @@ class dwFramework
 		
 		if(!defined('DW_BASE_DIR'))		    define('DW_BASE_DIR', DW_ROOT_DIR."dw/");
 		if(!defined('DW_CONNECTORS_DIR'))	define('DW_CONNECTORS_DIR', DW_BASE_DIR."connectors/");
+		if(!defined('DW_VIEWS_DIR')) 		define("DW_VIEWS_DIR", DW_BASE_DIR."views/");
+		if(!defined('DW_ANNOTATIONS_DIR')) 	define("DW_ANNOTATIONS_DIR", DW_BASE_DIR."annotations/");
 		if(!defined('DW_VENDORS_DIR')) 		define("DW_VENDORS_DIR", DW_BASE_DIR."vendors/");
 		if(!defined('DW_SMARTY_DIR')) 		define("DW_SMARTY_DIR", DW_VENDORS_DIR."Smarty/");
 
@@ -197,13 +200,21 @@ class dwFramework
 		if(!defined('DW_CACHE_DIR'))		define("DW_CACHE_DIR", DW_RUNTIME_DIR."cache/");
 		if(!defined('DW_TRADUCER_DIR'))		define("DW_TRADUCER_DIR", APP_DIR."traduce/");
 		if(!defined('DW_DBI_ENTITYDEF_DIR'))define("DW_DBI_ENTITYDEF_DIR", APP_DIR."entity/");
-				
+		
 		dw_require("classes/dwLogger");
 		dw_require("classes/dwAutoLoader");
 		self::$_autoLoader = new AutoLoader(array("dw" => DW_BASE_DIR));
 		
 		// Configure loggers
 		dwLogger::configure(DW_WWW_DIR.'log4php.xml');
+
+		dw_require("dwFrontController");
+
+		// Load annotations
+		dwAnnotations::load(DW_ANNOTATIONS_DIR);
+		
+		// Load views
+		self::includeOnceDirectory(DW_VIEWS_DIR);
 
 	}
 	
@@ -249,6 +260,24 @@ class dwFramework
 	public static function getAppLang()
 	{
 		return self::App() -> getLang();
+	}
+	
+	/**
+	 * Try to include all files from a directory
+	 * $dir The directory to scan
+	 */
+	public static function includeOnceDirectory($dir) {
+		$list = dwFile::ls($dir);
+		$loaded = array();
+		foreach($list as $file) {
+	
+			if(!is_dir($file)) {
+				$loaded[] = $file;
+				include_once($file);
+					
+			}
+		}
+		return $loaded;
 	}
 		
 }
