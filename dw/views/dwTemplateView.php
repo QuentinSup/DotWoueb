@@ -18,6 +18,10 @@ class dwTemplateView implements dwViewInterface
 	protected $_otraducer = null;
 	protected $_amodel = null;
 	protected $_sview = null;
+
+	public static function getCallerName() {
+		return "view";
+	}
 	
 	/**
 	 * Constructeur de la classe
@@ -106,8 +110,11 @@ class dwTemplateView implements dwViewInterface
 		return $tpl;
 	}
 	
-	public function render()
+	public function render($model)
 	{
+		if($model) {
+			$this -> addToModel($model);
+		}
 		$tpl = $this -> _prepare();
 		return $tpl->render($this -> _sview);
 	}
