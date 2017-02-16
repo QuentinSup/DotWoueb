@@ -5,9 +5,19 @@ namespace dw\classes;
 class dwObject {
 	protected $_dontExportAttributes = array("_dontExportAttributes");
 	
-	public function __construct($aattributes = array())
+	public function __construct($aattributes = null)
 	{
-		$this -> setAttributes($aattributes);
+		if(!is_null($aattributes)) {
+			if(is_object($aattributes)) {
+				$aattributes = get_object_vars($aattributes);
+			}
+			
+			if(is_assoc($aattributes)) {
+				$this -> setAttributes($aattributes);
+			} else {
+				throw new Exception("Parameter must be an associative array or an object");
+			}
+		}
 	}
 	
 	public function dontExport($mattr)
