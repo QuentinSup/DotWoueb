@@ -46,6 +46,7 @@ class dbi_dataEntity extends dwObject
 	protected $_aattributes = null;
 	protected $_odataSet = null;
 	protected $_odb    = null;
+	protected $_isfetched = false;
 
 	public function __construct($odb, $sentity, $aattributes, $aprimaryKey = null)
 	{
@@ -114,11 +115,12 @@ class dbi_dataEntity extends dwObject
 	
 	/**
 	 * find()
-	 * Recherche les enregistrements correspondant aux crit貥s courant de l'objet
+	 * Search records
 	 * 
 	 */
 	public function find($avalues = null, $orderBy = null, $ioffset = null, $ilimit = null, $whereAdd = null, $bfetch = true)
 	{
+		$this -> _isfetched = false;
 		$sorderBy = null;
 		if(!is_null($orderBy))
 		{
@@ -140,7 +142,7 @@ class dbi_dataEntity extends dwObject
 	
 	/**
 	 * select()
-	 * Alternative ࠬto find()
+	 * Alternative to find()
 	 */
 	public function select($whereAdd = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
@@ -149,11 +151,20 @@ class dbi_dataEntity extends dwObject
 	
 	/**
 	 * search()
-	 * Alternative ࠬto find()
+	 * Alternative to find()
 	 */
 	public function search($avalues = null, $ioffset = null, $ilimit = null, $orderBy = null)
 	{
 		return $this -> find($avalues, $orderBy, $ioffset, $ilimit);
+	}
+	
+	/**
+	 * lfind()
+	 * Alternative to find()
+	 */
+	public function lfind($ilimit = null, $ioffset = null, $orderBy = null)
+	{
+		return $this -> find(null, $orderBy, $ioffset, $ilimit);
 	}
 	
 	public function castSql($svalue)
@@ -249,12 +260,7 @@ class dbi_dataEntity extends dwObject
 	public function insert($avalues = null)
 	{
 		$this -> setFrom($avalues);
-		if($this -> _odb -> insert($this -> _sentity, $this -> getAttributes(true)))
-		{
-			#return $this -> get();
-			return true;
-		}
-		return false;
+		return $this -> _odb -> insert($this -> _sentity, $this -> getAttributes(true));
 	}
 	
 	public function getLastInsertId() 
@@ -267,9 +273,32 @@ class dbi_dataEntity extends dwObject
 		if($this -> _odataSet -> fetch())
 		{
 			$this -> setFrom($this -> _odataSet -> record -> toArray());
+			$this -> _isfetched = true;
 			return true;
 		}
 		return false;
+	}
+	
+	public function isFetched() {
+		return $this -> _isfetched;
+	}
+	
+	public function fetchAll() {
+		$r = array();
+
+		if(!$this -> isFetched()) {
+			$b = $this -> fetch();
+		} else {
+			$b = $this -> N() > 0;
+		}
+		
+		if($b) {
+			do {
+				$r[] = $this -> toArray();
+			} while($this -> fetch());
+		}
+		
+		return $r;
 	}
 	
 	public function indate($avalues = null)
@@ -318,6 +347,11 @@ class dbi_dataEntity extends dwObject
 
 	public function setFrom($aattributes, $ball = true)
 	{
+		
+		if(is_a($aattributes, 'dw\classes\dwObject')) {
+			$aattributes = $aattributes -> toArray();
+		}
+		
 		$this -> _setArrayFrom(array_keys($this -> _aattributes), $aattributes, $ball);
 	}
 }
@@ -959,6 +993,7 @@ class dbi
 	{
 		$aSet = array();
 		$aWhere = array();
+		
 		foreach(array_keys($aattributes) as $sattr)
 		{
 			$sql = $sattr." = ".$this -> toQueryString($aattributes[$sattr]);	
