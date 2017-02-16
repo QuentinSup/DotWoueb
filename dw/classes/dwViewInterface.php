@@ -3,7 +3,7 @@
 namespace dw\classes;
 
 interface dwViewInterface {
-	public function render();
+	public function render($model);
 }
 
 ?>
