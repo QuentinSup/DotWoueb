@@ -2,7 +2,6 @@
 
 namespace dw\classes;
 
-use dw\accessors\server;
 use dw\classes\dwRoute;
 
 class dwRouteMap  {
