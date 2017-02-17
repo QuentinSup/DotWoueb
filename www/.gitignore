@@ -2,7 +2,9 @@
 /irc/
 /isbn/
 /keeply/
-/myapi/
 /pathfinder/
 /plebe/
 /starter/
+*.log
+*.log.*
+**/runtime/
