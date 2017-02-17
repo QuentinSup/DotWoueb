@@ -111,7 +111,6 @@ class dwErrorController
 	public static function errorHandler($ierrno, $serrstr, $serrfile, $ierrline)
 	{
 
-		
 		$ae = new dwError($ierrno, $serrstr, $serrfile, $ierrline);
 		
 		self::logger() -> error("Error $ierrno on file $serrfile at line $ierrline : $serrstr");
@@ -167,7 +166,7 @@ class dwErrorController
 	/**
 	 * Initialise la capture des exceptions et des erreurs
 	 */
-	public static function setHandler()
+	public static function setHandlers()
 	{
         set_error_handler(array('dw\dwErrorController', 'errorHandler'));
 		set_exception_handler(array('dw\dwErrorController', 'exceptionHandler'));
