@@ -15,6 +15,17 @@
 	<listeners>
 		<listener name="accessControl" />
 	</listeners>
+	<security>
+		<adapters>
+			<adapter name="Basic" class="dw\adapters\security\dwBasicAuthorization">
+				<config>
+					<users>
+						<user name="jose">garcia</user>
+					</users>
+				</config>
+			</adapter>
+		</adapters>
+	</security>
 </config>
 <plugins />
 </application>

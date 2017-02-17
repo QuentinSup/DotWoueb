@@ -6,5 +6,10 @@
 		<version>1.0</version>
 		<description>FrameWork dotWoueb</description>
 	</about>
-	<config></config>
+	<config>
+		<handlers>
+			<handleExceptions />
+			<handleErrors />
+		</handlers>
+	</config>
 </dotwoueb>

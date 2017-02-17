@@ -14,6 +14,11 @@ use dw\accessors\ary;
 
 class server
 {
+	
+	/**
+	 * Prevent implementation
+	 */
+	private function __construct() {}
 
 	public static function get($name, $defaultvalue = null, $formatRequestFunction = 'trim')
 	{

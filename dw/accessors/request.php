@@ -15,6 +15,11 @@ use dw\accessors\ary;
 class request
 {
 
+	/**
+	 * Prevent implementation
+	 */
+	private function __construct() {}
+	
 	public static function get($name, $defaultvalue = null, $formatRequestFunction = 'trim')
 	{
 		return urldecode(ary::get($_REQUEST, $name, $defaultvalue, $formatRequestFunction));

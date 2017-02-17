@@ -17,6 +17,7 @@ use dw\helpers\dwFile;
 use dw\dwFrontController;
 use dw\dwFramework as dw;
 use dw\dwConnectors;
+use dw\dwSecurityController;
 use dw\dwErrorController;
 use dw\accessors\ary;
 use dw\classes\dwCacheFile;
@@ -232,6 +233,8 @@ class dwFramework
 		// Load views
 		self::includeOnceDirectory(DW_PROCESSORS_DIR);
 
+		dwSecurityController::init();
+		
 		// Load app configuration
 		dw::loadApplication(APP_NS);
 		

@@ -132,6 +132,21 @@ class dwApplication extends dwXMLConfig
 	}
 	
 	/**
+	 * Load a security adapter from its xml configuration
+	 * @param $xmlSecurityAdapterConfig The xml configuration extracted from the main Xml configuration
+	 */
+	protected function loadSecurityAdapterConfig($xmlSecurityAdapterConfig) {
+
+		$name = (string)$xmlSecurityAdapterConfig -> name;
+		$class = (string)$xmlSecurityAdapterConfig -> class;
+		$config = $xmlSecurityAdapterConfig -> config;
+		
+		self::logger() -> info("Load security adapter '$name' with class '$class'");
+		
+		dwSecurityController::loadAdapter($name, $class, $config);
+	}
+	
+	/**
 	 * loadConfig()
 	 * Load configuration from XML file
 	 * @author QuentinSup
@@ -155,6 +170,32 @@ class dwApplication extends dwXMLConfig
 				$this -> _namespace = (string)$xml -> config -> application -> ns;
 			}
 
+			// properties
+			if(isset($xml -> config) && isset($xml -> config -> properties) && isset($xml -> config -> properties -> property))
+			{
+				if(is_object($xml -> config -> properties -> property)) {
+					$this -> loadPropertyConfig($xml -> config -> properties -> property);
+				} else {
+					foreach($xml -> config -> properties -> property as $xmlProperty)
+					{
+						$this -> loadPropertyConfig($xmlProperty);
+					}
+				}
+			}
+				
+			// interceptors
+			if(isset($xml -> config -> interceptors) && isset($xml -> config -> interceptors -> interceptor))
+			{
+				if(is_object($xml -> config -> interceptors -> interceptor)) {
+					$this -> loadListenerConfig($xml -> config -> listeners -> listener);
+				} else {
+					foreach($xml -> config -> interceptors -> interceptor as $xmlListenerConfig)
+					{
+						$this -> loadInterceptorConfig($xmlListenerConfig);
+					}
+				}
+			}
+
 			// connectors
 			if(isset($xml -> config -> connectors) && isset($xml -> config -> connectors -> connector)) {
 				if(is_object($xml -> config -> connectors -> connector)) {
@@ -166,15 +207,15 @@ class dwApplication extends dwXMLConfig
 				}
 			}
 
-			// listeners
-			if(isset($xml -> config -> interceptors) && isset($xml -> config -> interceptors -> interceptor))
+			// security
+			if(isset($xml -> config -> security) && isset($xml -> config -> security -> adapters) && isset($xml -> config -> security -> adapters -> adapter))
 			{
-				if(is_object($xml -> config -> interceptors -> interceptor)) {
-					$this -> loadListenerConfig($xml -> config -> listeners -> listener);
+				if(is_object($xml -> config -> security -> adapters -> adapter)) {
+					$this -> loadSecurityAdapterConfig($xml -> config -> security -> adapters -> adapter);
 				} else {
-					foreach($xml -> config -> interceptors -> interceptor as $xmlListenerConfig)
+					foreach($xml -> config -> security -> adapters -> adapter as $xmlAdapterConfig)
 					{
-						$this -> loadInterceptorConfig($xmlListenerConfig);
+						$this -> loadSecurityAdapterConfig($xmlAdapterConfig);
 					}
 				}
 			}
@@ -191,19 +232,7 @@ class dwApplication extends dwXMLConfig
 					}
 				}
 			}
-			
-			if(isset($xml -> config) && isset($xml -> config -> properties) && isset($xml -> config -> properties -> property))
-			{
-				if(is_object($xml -> config -> properties -> property)) {
-					$this -> loadPropertyConfig($xml -> config -> properties -> property);	
-				} else {
-					foreach($xml -> config -> properties -> property as $xmlProperty)
-					{
-						$this -> loadPropertyConfig($xmlProperty);	
-					}
-				}
-			}
-			
+
 		} catch(\Exception $e) {
 			throw new dwException(E_APP_LOAD);	
 		}

@@ -12,6 +12,12 @@ namespace dw\accessors;
 
 class session
 {
+	
+	/**
+	 * Prevent implementation
+	 */
+	private function __construct() {}
+	
 	/**
 	 * Return true if a session has been started and is still active
 	 * @return boolean

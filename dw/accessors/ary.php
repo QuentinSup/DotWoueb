@@ -5,34 +5,48 @@ namespace dw\accessors;
 /**
  * ary (signifie array)
  * Manage an associative array
- * @author Quentin Supernant
+ * @author QuentinSup
  * @version 1.0
  * @package dotWoueb
  */
 
 class ary
 {
-
-	public static function get($ary, $name, $defaultvalue = null, $formatRequestFunction = null)
+	
+	/**
+	 * Prevent implementation
+	 */
+	private function __construct() {}
+	
+	// Static definitions
+	
+	public static function &get(&$ary, $name, $defaultvalue = null, $formatRequestFunction = null, $autoset = false)
 	{
-		if(!$ary) {
-			return $defaultvalue;
-		}
-		if(is_numeric($name) && is_assoc($ary)) {
-			$keys = array_keys($ary);
-			if($name < count($keys)) {
-				$name = $keys[$name];	
+		if($ary) {
+
+			if(is_numeric($name) && is_assoc($ary)) {
+				$keys = array_keys($ary);
+				if($name < count($keys)) {
+					$name = $keys[$name];	
+				}
 			}
-		}
-		if(isset($ary[$name]))
-		{
-			if(!is_array($ary[$name]) && !is_null($formatRequestFunction) && function_exists($formatRequestFunction))
+			if(isset($ary[$name]))
 			{
-				$ary[$name] = $formatRequestFunction($ary[$name]);
-			}
+				if(!is_array($ary[$name]) && !is_null($formatRequestFunction) && function_exists($formatRequestFunction))
+				{
+					$ary[$name] = $formatRequestFunction($ary[$name]);
+				}
+				return $ary[$name];
+			} 
+		
+		}
+
+		if($autoset === TRUE) {
+			$ary[$name] = $defaultvalue;
 			return $ary[$name];
-		} 
-		return $defaultvalue;
+		}
+		
+ 		return $defaultvalue;
 	}
 	
 	public static function set(&$ary, $name, $mvalue)
@@ -64,7 +78,7 @@ class ary
 	 * @param string $sname
 	 * @see is_set
 	 */
-	public static function exist($ary, $sname)
+	public static function exists($ary, $sname)
 	{
 		return self::is_set($ary, $sname);
 	}
