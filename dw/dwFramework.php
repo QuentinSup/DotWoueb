@@ -15,6 +15,14 @@ use dw\classes\AutoLoader;
 use dw\classes\dwHttpRequest;
 use dw\helpers\dwFile;
 use dw\dwFrontController;
+use dw\dwFramework as dw;
+use dw\dwConnectors;
+use dw\dwErrorController;
+use dw\accessors\ary;
+use dw\classes\dwCacheFile;
+use dw\helpers\dwNumeric;
+use dw\classes\dwTemplate;
+use dw\classes\traducers\dwXMLTraducer;
 
 /**
  * Classe principale du framework (toutes les fonctions sont statiques)
@@ -80,15 +88,6 @@ class dwFramework
 	{
 		return self::App() -> getRunMode() != "1";
 	}
-
-	/**
-	 * @deprecated
-	 */
-	public static function giveActionUrl($saction, $aget = null)
-	{
-		return 'index.php?action='.$saction.(!is_null($aget)?'&'.http_build_query($aget):'');
-	}
-	
 	
 	public static function loadConfig($curPath, $sXml = 'dw.xml', $sencoding = DW_DEFAULT_ENCODING)
 	{
@@ -180,10 +179,19 @@ class dwFramework
 		return $ary;	
 	}
 	
+	public static function logger() {
+		static $log = null;
+		if(is_null($log)) {
+			$log = dwLogger::getLogger(__CLASS__);
+		}
+		return $log;
+	}
+	
 	public static function load()
 	{
-		self::loadConfig(DW_WWW_DIR);
 		
+		self::loadConfig(DW_WWW_DIR);
+
 		if(!defined('DW_BASE_DIR'))		    define('DW_BASE_DIR', DW_ROOT_DIR."dw/");
 		if(!defined('DW_CONNECTORS_DIR'))	define('DW_CONNECTORS_DIR', DW_BASE_DIR."connectors/");
 		if(!defined('DW_VIEWS_DIR')) 		define("DW_VIEWS_DIR", DW_BASE_DIR."views/");
@@ -200,24 +208,61 @@ class dwFramework
 		if(!defined('DW_CACHE_DIR'))		define("DW_CACHE_DIR", DW_RUNTIME_DIR."cache/");
 		if(!defined('DW_TRADUCER_DIR'))		define("DW_TRADUCER_DIR", APP_DIR."traduce/");
 		if(!defined('DW_DBI_ENTITYDEF_DIR'))define("DW_DBI_ENTITYDEF_DIR", APP_DIR."entity/");
-		
+
 		dw_require("classes/dwLogger");
 		dw_require("classes/dwAutoLoader");
-		self::$_autoLoader = new AutoLoader(array("dw" => DW_BASE_DIR));
+		dw_require("dwFrontController");
 		
+		self::$_autoLoader = new AutoLoader(array("dw" => DW_BASE_DIR));
+				
 		// Configure loggers
 		dwLogger::configure(DW_WWW_DIR.'log4php.xml');
+				
+		// Set handlers
+		dwErrorController::setHandlers();
 
-		dw_require("dwFrontController");
-
+		// Load connectors
+		dwConnectors::loadConnectors(DW_CONNECTORS_DIR);
+		
 		// Load annotations
 		dwAnnotations::load(DW_ANNOTATIONS_DIR);
-		
+
 		// Load views
 		self::includeOnceDirectory(DW_VIEWS_DIR);
 
+		// Load app configuration
+		dw::loadApplication(DW_APP_NS);
+		
+		// Configure default dir
+		dwCacheFile::setCacheDir(DW_CACHE_DIR);
+		//dwPlugins::setPath(DW_PLUGINS_DIR);
+		dwTemplate::setWorkDir(DW_RUNTIME_DIR);
+		
+		// Configure
+		dwNumeric::setPrecision(4);
+		
+		if(is_dir(DW_TRADUCER_DIR.dw::getLocale()."/"))
+		{
+			dwXmlTraducer::setdefaultDir(DW_TRADUCER_DIR.dw::getLocale()."/");
+		} else {
+			dwXmlTraducer::setdefaultDir(DW_TRADUCER_DIR.dw::App() -> getLang()."/");
+		}
+		
+		/* En mode debug, les templates ne sont pas mis en cache par défaut */
+		dwTemplate::setDefaultCaching(false); //!dw::isDebug()
+		
+		// Configure cache
+		dwCacheFile::setUseCache(!dw::isDebug());
+		dwXmlTraducer::setDefaultCaching(!dw::isDebug());
+		
+		// Configure database interface
+		dbi::prepare(dw::isDebug()?DBI_MODE_DEBUG:DBI_MODE_RELEASE);
+		dbi::setCachingEntityDef(!dw::isDebug(), DW_DBI_ENTITYDEF_DIR);
+		
+		// Prepare app
+		dw::App() -> prepare();
 	}
-	
+
 	public static function run(dwHttpRequest $request, $buseDefaultController = true)
 	{
 		dwFrontController::singleton() -> run($request, DW_CONTROLLERS_DIR, $buseDefaultController);
