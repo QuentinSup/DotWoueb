@@ -119,8 +119,8 @@ class dwFrontController {
 							if(!is_subclass_of($view, 'dw\classes\dwViewInterface')) {
 								throw new dwException("The return value of controller must inherits dwViewInterface");	
 							}
-							
-							$response -> setContent($view -> render($model -> toArray()));
+
+							$response -> out($view -> render($model -> toArray()));
 				
 						}
 					}
