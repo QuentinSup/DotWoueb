@@ -1,11 +1,11 @@
 <?php
 
-namespace dw\classes\traducers;
+namespace dw\classes\i18n;
 
-use dw\classes\dwTraducerInterface;
+use dw\classes\dwI18nInterface;
 use dw\classes\dwXMLConfig;
 
-class dwXmlTraducer extends dwXMLConfig implements dwTraducerInterface
+class dwI18nXmlAdapter extends dwXMLConfig implements dwI18nInterface
 {
 	/** Chemin du r鰥rtoire ou sont stock鳠les fichiers XML */ 
 	protected static $_defaultDir     = './';

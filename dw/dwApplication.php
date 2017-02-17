@@ -3,7 +3,7 @@
 namespace dw;
 
 use dw\dwFramework as dw;
-use dw\dwListeners;
+use dw\dwInterceptors;
 use dw\dwPlugins;
 use dw\dwAnnotations;
 use dw\classes\dwException;
@@ -109,8 +109,8 @@ class dwApplication extends dwXMLConfig
 	 * Load a listener from its xml configuration
 	 * @param $xmlListenerConfig The xml configuration extracted from the main Xml configuration
 	 */
-	protected function loadListenerConfig($xmlListenerConfig) {
-		$listener = dwListeners::load((string)$xmlListenerConfig -> name);
+	protected function loadInterceptorConfig($xmlListenerConfig) {
+		$listener = dwInterceptors::load((string)$xmlListenerConfig -> name);
 		$this -> _listeners[(string)$xmlListenerConfig -> name] = $listener;
 	}
 	
@@ -167,14 +167,14 @@ class dwApplication extends dwXMLConfig
 			}
 
 			// listeners
-			if(isset($xml -> config -> listeners) && isset($xml -> config -> listeners -> listener))
+			if(isset($xml -> config -> interceptors) && isset($xml -> config -> interceptors -> interceptor))
 			{
-				if(is_object($xml -> config -> listeners -> listener)) {
+				if(is_object($xml -> config -> interceptors -> interceptor)) {
 					$this -> loadListenerConfig($xml -> config -> listeners -> listener);
 				} else {
-					foreach($xml -> config -> listeners -> listener as $xmlListenerConfig)
+					foreach($xml -> config -> interceptors -> interceptor as $xmlListenerConfig)
 					{
-						$this -> loadListenerConfig($xmlListenerConfig);
+						$this -> loadInterceptorConfig($xmlListenerConfig);
 					}
 				}
 			}
@@ -299,7 +299,7 @@ class dwApplication extends dwXMLConfig
 		}
 		
 		// Load from app directory
-		dw::includeOnceDirectory(DW_CONTROLLERS_DIR);
+		dw::includeOnceDirectory(APP_CONTROLLERS_DIR);
 		
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Load controllers from declared classes and set mapping");

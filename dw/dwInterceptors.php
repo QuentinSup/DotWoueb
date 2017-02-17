@@ -16,7 +16,7 @@ define('E_LISTENER_UNKNOW', 101);
  * @version 1.0
  * @package dotWoueb
  */
-class dwListeners {
+class dwInterceptors {
 	
 	public static $defaultPath = './';
 	public static $suffixClassName = '';
@@ -31,12 +31,12 @@ class dwListeners {
 		return $logger;
 	}
 	
-	public static function getListeners()
+	public static function getInterceptors()
 	{
 		return self::$_aLoaded;	
 	}
 	
-	public static function getListener($sname)
+	public static function getInterceptor($sname)
 	{
 		if(!self::isLoaded($sname))
 		{
@@ -50,7 +50,7 @@ class dwListeners {
 		return isset(self::$_aLoaded[$sname]);
 	}
 	
-	public static function &loadListener($sname, $path = DW_LISTENERS_DIR, $useCache = true)
+	public static function &loadInterceptor($sname, $path = APP_INTERCEPTORS_DIR, $useCache = true)
 	{
 		if(is_null($path)) {
 			$path = self::$defaultPath;
@@ -58,7 +58,7 @@ class dwListeners {
 		if(!isset(self::$_aLoaded[$sname]) || !$useCache) {
 			
 			if(self::logger() -> isTraceEnabled()) {
-				self::logger() -> trace("Load listener file $path.$sname.php");
+				self::logger() -> trace("Load interceptor file '$path.$sname.php'");
 			}
 			
 			include_once($path.$sname.'.php');
@@ -66,11 +66,11 @@ class dwListeners {
 			
 			if(!class_exists($class))
 			{
-				throw new dwException("Class '$class' for listener '$sname' doesn't exist");	
+				throw new dwException("Class '$class' for interceptor '$sname' doesn't exist");	
 			} else {
 				$listener = new $class($sname);
-				if(!is_subclass_of($listener, "dw\classes\dwListenerInterface")) {
-					throw new dwException("Class '$class' for listener '$sname' is not a subclass of dw\classes\dwListenerInterface");	
+				if(!is_subclass_of($listener, "dw\classes\dwInterceptorInterface")) {
+					throw new dwException("Class '$class' for interceptor '$sname' is not a subclass of dw\classes\dwInterceptorInterface");	
 				} else {
 					$listener -> init();
 					self::$_aLoaded[$sname] = $listener;
@@ -80,24 +80,24 @@ class dwListeners {
 		return self::$_aLoaded[$sname];	
 	}
 	 
-	public static function &load($mlisteners, $path = DW_LISTENERS_DIR, $useCache = true)
+	public static function &load($interceptors, $path = APP_INTERCEPTORS_DIR, $useCache = true)
 	{
-		if(is_array($mlisteners))
+		if(is_array($interceptors))
 		{
-			foreach($mlisteners as $sname)
+			foreach($interceptors as $sname)
 			{
 				self::load($sname, $path, $useCache);	
 			}
 		} else {
-			return self::loadListener($mlisteners, $path, $useCache);		
+			return self::loadInterceptor($interceptors, $path, $useCache);		
 		}
 	}
 	
-	public static function forAllListenersDo($sfunction, dwHttpRequest $request, dwHttpResponse $response, dwModel $model)
+	public static function forAllInterceptorsDo($sfunction, dwHttpRequest $request, dwHttpResponse $response, dwModel $model)
 	{
-		foreach(self::$_aLoaded as $listener)
+		foreach(self::$_aLoaded as $interceptor)
 		{
-			if($listener -> $sfunction($request, $response, $model) === false) {
+			if($interceptor -> $sfunction($request, $response, $model) === false) {
 				return false;
 			}
 		}

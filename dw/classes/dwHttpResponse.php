@@ -64,6 +64,11 @@ class dwHttpResponse {
 		ob_end_flush();
 	}
 	
+	public function end() {
+		$this -> flush();
+		die;
+	}
+	
 	public function out($content) {
 		echo $content;
 	}

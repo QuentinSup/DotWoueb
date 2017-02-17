@@ -22,7 +22,7 @@ use dw\accessors\ary;
 use dw\classes\dwCacheFile;
 use dw\helpers\dwNumeric;
 use dw\classes\dwTemplate;
-use dw\classes\traducers\dwXMLTraducer;
+use dw\classes\i18n\dwI18nXMLAdapter;
 
 /**
  * Classe principale du framework (toutes les fonctions sont statiques)
@@ -159,7 +159,7 @@ class dwFramework
 	public static function loadApplication($namespace)
 	{
 		self::$_application = new dwApplication($namespace);
-		self::$_application -> loadConfig(DW_WEBINF_DIR);
+		self::$_application -> loadConfig(APP_WEBINF_DIR);
 		return self::$_application;
 	}
 	
@@ -198,16 +198,18 @@ class dwFramework
 		if(!defined('DW_ANNOTATIONS_DIR')) 	define("DW_ANNOTATIONS_DIR", DW_BASE_DIR."annotations/");
 		if(!defined('DW_VENDORS_DIR')) 		define("DW_VENDORS_DIR", DW_BASE_DIR."vendors/");
 		if(!defined('DW_SMARTY_DIR')) 		define("DW_SMARTY_DIR", DW_VENDORS_DIR."Smarty/");
+		if(!defined('DW_INTERCEPTORS_DIR'))	define('DW_INTERCEPTORS_DIR', DW_BASE_DIR."interceptors/");
+		
+		if(!defined('APP_NS'))					define("APP_NS", basename(realpath(".")));
+		if(!defined('APP_INTERCEPTORS_DIR'))	define('APP_INTERCEPTORS_DIR', APP_DIR."interceptors/");
+		if(!defined('APP_CONTROLLERS_DIR'))  	define("APP_CONTROLLERS_DIR", APP_DIR."controllers/");
+		if(!defined('APP_WEBINF_DIR'))			define("APP_WEBINF_DIR", APP_DIR."web-inf/");
+		
 
-		if(!defined('DW_LISTENERS_DIR'))	define('DW_LISTENERS_DIR', APP_DIR."listeners/");
-		if(!defined('DW_CONTROLLERS_DIR'))  define("DW_CONTROLLERS_DIR", APP_DIR."controllers/");
-		if(!defined('DW_WEBINF_DIR'))		define("DW_WEBINF_DIR", APP_DIR."web-inf/");
-		if(!defined('DW_APP_NS'))			define("DW_APP_NS", basename(realpath(".")));
-
-		if(!defined('DW_RUNTIME_DIR'))		define("DW_RUNTIME_DIR", DW_WEBINF_DIR."runtime/");
-		if(!defined('DW_CACHE_DIR'))		define("DW_CACHE_DIR", DW_RUNTIME_DIR."cache/");
-		if(!defined('DW_TRADUCER_DIR'))		define("DW_TRADUCER_DIR", APP_DIR."traduce/");
-		if(!defined('DW_DBI_ENTITYDEF_DIR'))define("DW_DBI_ENTITYDEF_DIR", APP_DIR."entity/");
+		if(!defined('APP_RUNTIME_DIR'))			define("APP_RUNTIME_DIR", APP_WEBINF_DIR."runtime/");
+		if(!defined('APP_CACHE_DIR'))			define("APP_CACHE_DIR", APP_RUNTIME_DIR."cache/");
+		if(!defined('APP_I18N_DIR'))			define("APP_I18N_DIR", APP_DIR."i18n/");
+		if(!defined('APP_DBI_ENTITYDEF_DIR'))	define("APP_DBI_ENTITYDEF_DIR", APP_DIR."entity/");
 
 		dw_require("classes/dwLogger");
 		dw_require("classes/dwAutoLoader");
@@ -231,21 +233,21 @@ class dwFramework
 		self::includeOnceDirectory(DW_VIEWS_DIR);
 
 		// Load app configuration
-		dw::loadApplication(DW_APP_NS);
+		dw::loadApplication(APP_NS);
 		
 		// Configure default dir
-		dwCacheFile::setCacheDir(DW_CACHE_DIR);
+		dwCacheFile::setCacheDir(APP_CACHE_DIR);
 		//dwPlugins::setPath(DW_PLUGINS_DIR);
-		dwTemplate::setWorkDir(DW_RUNTIME_DIR);
+		dwTemplate::setWorkDir(APP_RUNTIME_DIR);
 		
 		// Configure
 		dwNumeric::setPrecision(4);
 		
-		if(is_dir(DW_TRADUCER_DIR.dw::getLocale()."/"))
+		if(is_dir(APP_I18N_DIR.dw::getLocale()."/"))
 		{
-			dwXmlTraducer::setdefaultDir(DW_TRADUCER_DIR.dw::getLocale()."/");
+			dwI18nXMLAdapter::setdefaultDir(APP_I18N_DIR.dw::getLocale()."/");
 		} else {
-			dwXmlTraducer::setdefaultDir(DW_TRADUCER_DIR.dw::App() -> getLang()."/");
+			dwI18nXMLAdapter::setdefaultDir(APP_I18N_DIR.dw::App() -> getLang()."/");
 		}
 		
 		/* En mode debug, les templates ne sont pas mis en cache par défaut */
@@ -253,11 +255,11 @@ class dwFramework
 		
 		// Configure cache
 		dwCacheFile::setUseCache(!dw::isDebug());
-		dwXmlTraducer::setDefaultCaching(!dw::isDebug());
+		dwI18nXMLAdapter::setDefaultCaching(!dw::isDebug());
 		
 		// Configure database interface
 		dbi::prepare(dw::isDebug()?DBI_MODE_DEBUG:DBI_MODE_RELEASE);
-		dbi::setCachingEntityDef(!dw::isDebug(), DW_DBI_ENTITYDEF_DIR);
+		dbi::setCachingEntityDef(!dw::isDebug(), APP_DBI_ENTITYDEF_DIR);
 		
 		// Prepare app
 		dw::App() -> prepare();
@@ -265,7 +267,7 @@ class dwFramework
 
 	public static function run(dwHttpRequest $request, $buseDefaultController = true)
 	{
-		dwFrontController::singleton() -> run($request, DW_CONTROLLERS_DIR, $buseDefaultController);
+		dwFrontController::singleton() -> run($request, APP_CONTROLLERS_DIR, $buseDefaultController);
 	}
 	
 	public static function runAndDie(dwHttpRequest $request, $buseDefaultController = true)

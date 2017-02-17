@@ -2,13 +2,15 @@
 
 namespace dw;
 
+use dw\dwFramework as dw;
 use dw\classes\dwHttpRequest;
 use dw\classes\dwHttpResponse;
 use dw\classes\dwModel;
 use dw\views\dwTextView;
 use dw\views\dwJsonView;
 use dw\classes\dwException;
-use dw\dwFramework as dw;
+use dw\classes\dwSecurity;
+use dw\enums\HttpStatus;
 
 /**
  * Execute controllers
@@ -63,15 +65,20 @@ class dwFrontController {
 				$controllerClass = $callback[0];
 				$controllerMethod = $callback[1];	
 			}
+			
+			if(!dwSecurity::access($controllerClass, $controllerMethod)) {
+				$response -> statusCode = HttpStatus::UNAUTHORIZED;
+				$response -> end();
+			}
 
 			dwPlugins::forAllPluginsDo('prepareRequest', $request, $response, $model);
-			if(dwListeners::forAllListenersDo('prepareRequest', $request, $response, $model)) {
+			if(dwInterceptors::forAllInterceptorsDo('prepareRequest', $request, $response, $model)) {
 
 				if(class_exists($controllerClass))
 				{
 					if(!is_subclass_of($controllerClass,'dw\classes\dwControllerInterface'))
 					{
-						throw new dwException("Les controleurs doivent hériter de dwControllerInterface");
+						throw new dwException("Controler must inherit dw\classes\dwControllerInterface");
 					}
 				
 					$controller = new $controllerClass();
@@ -79,7 +86,7 @@ class dwFrontController {
 					if($controller -> startRequest($request, $response, $model) !== false) {
 
 						dwPlugins::forAllPluginsDo('processRequest', $request, $response, $model);
-						if(dwListeners::forAllListenersDo('processRequest', $request, $response, $model)) {
+						if(dwInterceptors::forAllInterceptorsDo('processRequest', $request, $response, $model)) {
 					
 							$view = $controller -> processRequest($request, $response, $model);
 	
@@ -117,7 +124,7 @@ class dwFrontController {
 							}
 
 							if(!is_subclass_of($view, 'dw\classes\dwViewInterface')) {
-								throw new dwException("The return value of controller must inherits dwViewInterface");	
+								throw new dwException("The return value of controller must inherits `dw\classes\dwViewInterface");	
 							}
 
 							$response -> out($view -> render($model -> toArray()));
@@ -132,7 +139,7 @@ class dwFrontController {
 			}
 			
 			dwPlugins::forAllPluginsDo('terminateRequest', $request, $response, $model);
-			dwListeners::forAllListenersDo('terminateRequest', $request, $response, $model);
+			dwInterceptors::forAllInterceptorsDo('terminateRequest', $request, $response, $model);
 	
 		} catch(\Exception $e) {
 			$response -> statusCode = 500;

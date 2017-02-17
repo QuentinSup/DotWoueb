@@ -3,13 +3,13 @@
 namespace dw\classes;
 
 /**
- * Interface de base pour implémenter les listeners
+ * Interface for interceptors
  * @author Quentin Supernant
  * @version 1.0
  * @package dotWoueb
  */
  
-interface dwListenerInterface 
+interface dwInterceptorInterface 
 {
 	public function init();
 	public function prepareRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
