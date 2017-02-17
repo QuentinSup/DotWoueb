@@ -6,7 +6,6 @@ class dwHttpResponse {
 	
 	public $contentType = "text/html";
 	public $statusCode = null;
-	public $content = "";
 
 	private $_headers = array();
 
@@ -35,11 +34,13 @@ class dwHttpResponse {
 	
 	public function sendHeaders() {
 		http_response_code($this -> statusCode);
-		if(!headers_sent()) {
-			
+		if($this -> isHeadersSent()) {
+
 			if(self::log() -> isWarnEnabled()) {
 				self::log() -> warn('Headers has already been sent : headers values will be ignored');
 			}
+		
+		} else {
 			
 			header('Content-Type: '.$this -> contentType, false);
 			
@@ -60,17 +61,17 @@ class dwHttpResponse {
 		if(!$this -> isHeadersSent()) {
 			$this -> sendHeaders();
 		}
-		echo $this -> content;
 		ob_end_flush();
 	}
 	
-	public function setContent($content) {
-		$this -> content = $content;
+	public function out($content) {
+		echo $content;
 	}
 	
 	public function start() {
 		// Start treatment
-		ob_start();
+		ob_implicit_flush(FALSE);
+		ob_start("ob_gzhandler");
 	}
 	
 	public function stream($data = null) {
