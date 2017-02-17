@@ -2,7 +2,7 @@
 
 namespace dw\classes;
 
-interface dwViewInterface {
+interface dwHttpResponseInterface {
 	public function render($model);
 }
 

@@ -6,10 +6,9 @@ use dw\dwFramework as dw;
 use dw\classes\dwHttpRequest;
 use dw\classes\dwHttpResponse;
 use dw\classes\dwModel;
-use dw\views\dwTextView;
-use dw\views\dwJsonView;
+use dw\processors\dwTextResponse;
+use dw\processors\dwJsonResponse;
 use dw\classes\dwException;
-use dw\classes\dwSecurity;
 use dw\enums\HttpStatus;
 
 /**
@@ -66,7 +65,7 @@ class dwFrontController {
 				$controllerMethod = $callback[1];	
 			}
 			
-			if(!dwSecurity::access($controllerClass, $controllerMethod)) {
+			if(!dwSecurityController::access($controllerClass, $controllerMethod, $request, $response)) {
 				$response -> statusCode = HttpStatus::UNAUTHORIZED;
 				$response -> end();
 			}
@@ -88,46 +87,46 @@ class dwFrontController {
 						dwPlugins::forAllPluginsDo('processRequest', $request, $response, $model);
 						if(dwInterceptors::forAllInterceptorsDo('processRequest', $request, $response, $model)) {
 					
-							$view = $controller -> processRequest($request, $response, $model);
+							$resp = $controller -> processRequest($request, $response, $model);
 	
 							if(!is_null($controllerMethod)) {
-								$view = $controller -> $controllerMethod($request, $response, $model);
+								$resp = $controller -> $controllerMethod($request, $response, $model);
 							}
 	
-							if(is_string($view)) {
+							if(is_string($resp)) {
 								
-								if(strpos($view, 'redirect:') === 0) {
-									$url = substr($view, 9);
+								if(strpos($resp, 'redirect:') === 0) {
+									$url = substr($resp, 9);
 									header("Location: $url");
 									die;
 								}
 								
-								$ipos = strpos($view, ":");
+								$ipos = strpos($resp, ":");
 								if($ipos) {
-									$callerName = substr($view, 0, $ipos);
-									$viewContent = substr($view, $ipos + 1);
-									$viewClass = dw::App() -> getClassView($callerName);
-									if(!$viewClass) {
-										throw new dwException("'$callerName' cannot be interpreted as a view");
+									$callerName = substr($resp, 0, $ipos);
+									$strContent = substr($resp, $ipos + 1);
+									$processorClass = dw::App() -> getClassProcessor($callerName);
+									if(!$processorClass) {
+										throw new dwException("'$callerName' cannot be interpreted as a processor");
 									}
-									$view = new $viewClass($viewContent);
+									$resp = new $processorClass($strContent);
 								} else {
-									$view = new dwTextView($view);
+									$resp = new dwTextResponse($resp);
 								}
 								
-							} elseif(!$view) {
-								$view = new dwTextView("");	
-							} elseif(is_array($view)) {
+							} elseif(!$resp) {
+								$resp = new dwTextResponse("");	
+							} elseif(is_array($resp)) {
 								if($response -> isJSONContent()) {
-									$view = new dwJsonView($view);
+									$resp = new dwJsonResponse($resp);
 								}
 							}
 
-							if(!is_subclass_of($view, 'dw\classes\dwViewInterface')) {
-								throw new dwException("The return value of controller must inherits `dw\classes\dwViewInterface");	
+							if(!is_subclass_of($resp, 'dw\classes\dwHttpResponseInterface')) {
+								throw new dwException("The return value of controller must inherits `dw\classes\dwHttpResponseInterface");	
 							}
 
-							$response -> out($view -> render($model -> toArray()));
+							$response -> out($resp -> render($model -> toArray()));
 				
 						}
 					}

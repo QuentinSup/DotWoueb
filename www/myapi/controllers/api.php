@@ -59,7 +59,7 @@ class index extends dwBasicController {
 	}
 	
 	/**
-	 * Retourne e contenu d'une API
+	 * Retourne contenu d'une API
 	 * @Mapping(value = ':categoryName/:id', method = "get")
 	 */
 	public function getFromAPI(dwHttpRequest $request, dwHttpResponse $response, dwModel $model) {

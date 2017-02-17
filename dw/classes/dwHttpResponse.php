@@ -76,7 +76,12 @@ class dwHttpResponse {
 	public function start() {
 		// Start treatment
 		ob_implicit_flush(FALSE);
-		ob_start("ob_gzhandler");
+		
+		if(DW_INIT_GZIP) {
+			ob_start("ob_gzhandler");
+		} else {
+			ob_start();
+		}
 	}
 	
 	public function stream($data = null) {

@@ -1,8 +1,8 @@
 <?php 
 
-namespace dw\views;
+namespace dw\processors;
 
-class dwJsonView extends dwTextView {
+class dwJsonResponse extends dwTextResponse {
 
 	public static function getCallerName() {
 		return "json";

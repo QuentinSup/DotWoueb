@@ -1,10 +1,10 @@
 <?php 
 
-namespace dw\views;
+namespace dw\processors;
 
 use dw\helpers\dwFile;
 
-class dwFileView extends dwTextView {
+class dwFileResponse extends dwTextResponse {
 
 	public static function getCallerName() {
 		return "file";

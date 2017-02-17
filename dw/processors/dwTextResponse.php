@@ -1,10 +1,10 @@
 <?php 
 
-namespace dw\views;
+namespace dw\processors;
 
-use dw\classes\dwViewInterface;
+use dw\classes\dwHttpResponseInterface;
 
-class dwTextView implements dwViewInterface {
+class dwTextResponse implements dwHttpResponseInterface {
 	
 	public static function getCallerName() {
 		return "text";

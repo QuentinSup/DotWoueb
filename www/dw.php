@@ -5,6 +5,8 @@ ini_set("short_open_tag", "1");
 
 date_default_timezone_set('Europe/Paris');
 
+define('DW_INIT_GZIP', '0');
+
 define("WORK_PATH", dirname(__FILE__));
 define("APP_DIR", "./");
 

@@ -1,6 +1,6 @@
 <?php
 
-use dw\classes\dwSecurity;
+use dw\dwSecurityController;
 
 /**
  * Annotation Security
@@ -32,8 +32,7 @@ class Security extends Annotation {
 	 */
 	public static function processClass($app, $reflection, $annotationClass) {
 		$className = $reflection -> name;
-		dwSecurity::watch($annotationClass, $className, null);
-
+		dwSecurityController::watch($annotationClass, $className, null);
 	}
 	
 	/**
@@ -51,7 +50,7 @@ class Security extends Annotation {
 			$className = $reflection -> name;
 			$methodName = $reflectionMethod -> name;
 			
-			dwSecurity::watch($annotationMethod, $className, $methodName);
+			dwSecurityController::watch($annotationMethod, $className, $methodName);
 			
 		}
 	}

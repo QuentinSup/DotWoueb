@@ -1,9 +1,9 @@
 <?php
 
-namespace dw\views;
+namespace dw\processors;
 
-use dw\classes\dwTemplate;
-use dw\classes\dwViewInterface;
+use dw\adapters\template\dwSmartyTemplate;
+use dw\classes\dwHttpResponseInterface;
 
 /**
  * Classe de base pour implementer l'association Model/View.
@@ -13,7 +13,7 @@ use dw\classes\dwViewInterface;
  * @version 1.0
  * @package dotWoueb
  */
-class dwTemplateView implements dwViewInterface
+class dwViewResponse implements dwHttpResponseInterface
 {
 	protected $_otraducer = null;
 	protected $_amodel = null;
@@ -65,7 +65,7 @@ class dwTemplateView implements dwViewInterface
 		if(!is_null($stemplate))
 		{
 			
-			$mvalue = dwTemplate::factory($stemplate, $mvalue);
+			$mvalue = dwSmartyTemplate::factory($stemplate, $mvalue);
 		}
 		if(is_array($akeys))
 		{
@@ -105,7 +105,7 @@ class dwTemplateView implements dwViewInterface
 	
 	protected function _prepare()
 	{
-		$tpl = new dwTemplate();
+		$tpl = new dwSmartyTemplate();
 		$tpl->assign($this -> _amodel);	
 		return $tpl;
 	}

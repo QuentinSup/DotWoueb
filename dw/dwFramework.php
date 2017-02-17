@@ -21,7 +21,7 @@ use dw\dwErrorController;
 use dw\accessors\ary;
 use dw\classes\dwCacheFile;
 use dw\helpers\dwNumeric;
-use dw\classes\dwTemplate;
+use dw\adapters\template\dwSmartyTemplate;
 use dw\classes\i18n\dwI18nXMLAdapter;
 
 /**
@@ -194,7 +194,7 @@ class dwFramework
 
 		if(!defined('DW_BASE_DIR'))		    define('DW_BASE_DIR', DW_ROOT_DIR."dw/");
 		if(!defined('DW_CONNECTORS_DIR'))	define('DW_CONNECTORS_DIR', DW_BASE_DIR."connectors/");
-		if(!defined('DW_VIEWS_DIR')) 		define("DW_VIEWS_DIR", DW_BASE_DIR."views/");
+		if(!defined('DW_PROCESSORS_DIR')) 	define("DW_PROCESSORS_DIR", DW_BASE_DIR."processors/");
 		if(!defined('DW_ANNOTATIONS_DIR')) 	define("DW_ANNOTATIONS_DIR", DW_BASE_DIR."annotations/");
 		if(!defined('DW_VENDORS_DIR')) 		define("DW_VENDORS_DIR", DW_BASE_DIR."vendors/");
 		if(!defined('DW_SMARTY_DIR')) 		define("DW_SMARTY_DIR", DW_VENDORS_DIR."Smarty/");
@@ -230,7 +230,7 @@ class dwFramework
 		dwAnnotations::load(DW_ANNOTATIONS_DIR);
 
 		// Load views
-		self::includeOnceDirectory(DW_VIEWS_DIR);
+		self::includeOnceDirectory(DW_PROCESSORS_DIR);
 
 		// Load app configuration
 		dw::loadApplication(APP_NS);
@@ -238,7 +238,7 @@ class dwFramework
 		// Configure default dir
 		dwCacheFile::setCacheDir(APP_CACHE_DIR);
 		//dwPlugins::setPath(DW_PLUGINS_DIR);
-		dwTemplate::setWorkDir(APP_RUNTIME_DIR);
+		dwSmartyTemplate::setWorkDir(APP_RUNTIME_DIR);
 		
 		// Configure
 		dwNumeric::setPrecision(4);
@@ -251,7 +251,7 @@ class dwFramework
 		}
 		
 		/* En mode debug, les templates ne sont pas mis en cache par défaut */
-		dwTemplate::setDefaultCaching(false); //!dw::isDebug()
+		dwSmartyTemplate::setDefaultCaching(false); //!dw::isDebug()
 		
 		// Configure cache
 		dwCacheFile::setUseCache(!dw::isDebug());

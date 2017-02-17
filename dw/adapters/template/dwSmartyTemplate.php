@@ -1,6 +1,6 @@
 <?php
 
-namespace dw\classes;
+namespace dw\adapters\template;
 
 require_once(DW_SMARTY_DIR."Smarty.class.php");
 
@@ -10,7 +10,7 @@ require_once(DW_SMARTY_DIR."Smarty.class.php");
  * @version 1.0
  * @package dotWoueb
  */
-class dwTemplate extends \Smarty
+class dwSmartyTemplate extends \Smarty
 {
 	protected static $_workDir = './';
 	protected static $_defaultCaching = false;

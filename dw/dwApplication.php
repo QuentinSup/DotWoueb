@@ -29,7 +29,7 @@ class dwApplication extends dwXMLConfig
 	protected $_properties = array();
 	protected $_namespace = "";
 	protected $_controllers = array();
-	protected $_views = array();
+	protected $_processors = array();
 	
 	// Logger
 	private static function logger() {
@@ -340,16 +340,16 @@ class dwApplication extends dwXMLConfig
 			}
 						
 			// View
-			if(is_subclass_of($class, 'dw\classes\dwViewInterface')) {
+			if(is_subclass_of($class, 'dw\classes\dwHttpResponseInterface')) {
 
 				$callerName = $class::getCallerName();
 				if($callerName) {
 					
 					if(self::logger() -> isDebugEnabled()) {
-						self::logger() -> debug("Found view interface $callerName");
+						self::logger() -> debug("Found http response adapter '$callerName'");
 					}
 					
-					$this -> _views[$callerName] = $class;
+					$this -> _processors[$callerName] = $class;
 				}
 			}
 			
@@ -357,8 +357,8 @@ class dwApplication extends dwXMLConfig
 
 	}
 	
-	public function getClassView($callerName) {
-		return ary::get($this -> _views, $callerName);
+	public function getClassProcessor($callerName) {
+		return ary::get($this -> _processors, $callerName);
 	}
 
 	/**

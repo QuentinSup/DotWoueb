@@ -9,7 +9,7 @@ dw_require('vendors/addendum/annotations');
 
 /**
  * 
- * @author Clevertech
+ * @author QuentinSup
  *
  */
 class dwAnnotations {
@@ -37,11 +37,13 @@ class dwAnnotations {
 			$fnAnnotationMethod = "\\".$annotationName."::processMethod";
 			$fnAnnotationProperty = "\\".$annotationName."::processProperty";
 			
-			$annotationsClass = $reflection -> getAnnotations($annotationName);
-			
-			if($annotationsClass) {
+			$annotationsClass = $reflection -> getAllAnnotations($annotationName);
+
+			if(count($annotationsClass) > 0) {
 				if(is_callable($fnAnnotationClass)) {
-					eval($fnAnnotationClass.'($app, $reflection, $annotationClass);');
+					foreach($annotationsClass as $annotationClass) {
+						eval($fnAnnotationClass.'($app, $reflection, $annotationClass);');
+					}
 				}
 			}
 			
