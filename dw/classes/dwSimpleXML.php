@@ -7,7 +7,17 @@ use dw\helpers\dwFile;
 class dwSimpleXMLElement extends dwObject
 {
 	public $cdata = "";
+	
+
+	
 }
+
+class dwXmlTag extends \ArrayObject {
+	public function &__get($ind) {
+		return $this[0] -> $ind;
+	}
+}
+
 
 class dwSimpleXML {
 	
@@ -94,18 +104,36 @@ class dwSimpleXML {
     	$this -> level++;
     	$this -> acurrent[$this -> level] = &$this -> acurData;
     	$stag = strtolower($tag);
+    	/**
     	if(isset($this -> acurData -> $stag))
     	{
+    		
     		if(is_object($this -> acurData -> $stag))
     		{
     			$this -> acurData -> $stag = array($this -> acurData -> $stag);
     		}
+    		
     		$a = &$this -> acurData -> $stag;
     		$this -> acurData = &$a[];
     	} else {
     		$this -> acurData = &$this -> acurData -> $stag;
     	}
+    	*/
+    	if(!isset($this -> acurData -> $stag))
+    	{
+    		$this -> acurData -> $stag = new dwXmlTag();
+    	}
+    	$e =new dwSimpleXMLElement(array_change_key_case($attributes));
+    	$d = $this -> acurData -> $stag;
+    	$d[] = $e;
+    	$this -> acurData = &$e;
+    	/*
+    	$a = &$this -> acurData -> $stag;
+    	$this -> acurData = &$a[];
    		$this -> acurData = new dwSimpleXMLElement(array_change_key_case($attributes));
+   		print_r($this -> acurData -> $stag);
+   		die;
+   		*/
     }
 	
 	/**
