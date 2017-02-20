@@ -46,3 +46,4 @@ Temporary Items
 .settings/org.eclipse.core.resources.prefs
 *.prefs
 .settings/org.eclipse.wst.common.project.facet.core.xml
+/.externalToolBuilders/
