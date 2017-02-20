@@ -176,9 +176,9 @@ class dwApplication extends dwXMLConfig
 			}
 
 			// properties
-			if($xml -> config -> properties && $xml -> config -> properties -> property)
+			if($xml -> properties && $xml -> properties -> property)
 			{
-				foreach($xml -> config -> properties -> property as $xmlProperty)
+				foreach($xml -> properties -> property as $xmlProperty)
 				{
 					$this -> loadPropertyConfig($xmlProperty);
 				}
