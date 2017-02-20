@@ -4,6 +4,11 @@ namespace dw\helpers;
 
 use dw\accessors\ary;
 
+/**
+ * 
+ * @author QuentinSup
+ * @todo see ArrayObject alternative
+ */
 class dwArray {
 	
 	private $_array;
