@@ -65,9 +65,9 @@ class dwFrontController {
 				$controllerMethod = $callback[1];	
 			}
 			
-			if(!dwSecurityController::access($controllerClass, $controllerMethod, $request, $response)) {
+			if(!dwSecurityController::control($controllerClass, $controllerMethod, $request, $response)) {
 				$response -> statusCode = HttpStatus::UNAUTHORIZED;
-				$response -> end();
+				$response -> end(); // end script
 			}
 
 			dwPlugins::forAllPluginsDo('prepareRequest', $request, $response, $model);

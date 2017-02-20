@@ -22,6 +22,7 @@ class dwInterceptors {
 	
 	public static $defaultPath = './';
 	public static $suffixClassName = '';
+	
 	private static $_aLoaded = array();
 	 
 	// Logger

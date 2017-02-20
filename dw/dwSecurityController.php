@@ -69,7 +69,7 @@ class dwSecurityController {
 	 * @param unknown $method
 	 * @return boolean
 	 */
-	public static function access($class, $method, dwHttpRequest $request, dwHttpResponse $response) {
+	public static function control($class, $method, dwHttpRequest $request, dwHttpResponse $response) {
 		$adapters = self::$_methods -> get($class."::", array());
 		$adapters = $adapters + self::$_methods -> get($class."::".$method, array());
 
