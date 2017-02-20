@@ -4,14 +4,19 @@ namespace dw\connectors;
 
 use dw\classes\dwConnectorInterface;
 
-class dwMailConnector implements dwConnectorInterface {
+/**
+ * Smtp connector
+ * @author QuentinSup
+ *
+ */
+class dwSmtpConnector implements dwConnectorInterface {
 
 	protected $_from = null;
 	protected $_smtp = null;
 	protected $_port = null;
 	
 	public static function getName() {
-		return "mail";
+		return "smtp";
 	}
 	
 	public function digestConfig($xml) {

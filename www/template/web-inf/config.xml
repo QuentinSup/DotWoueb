@@ -10,7 +10,7 @@
 	<application run="0" lang="fr" />
 	<connectors>
 		<!-- <connector name="db" type="dbi" dsn="mysqli://root:@localhost:/nombd" autoconnect="1" />  -->
-		<!-- <connector name="mail" type="mail" from="no-reply@admin.fr" />  -->
+		<!-- <connector name="mail" type="smtp" from="no-reply@admin.fr" />  -->
 	</connectors>
 	<properties>
 	</properties>
