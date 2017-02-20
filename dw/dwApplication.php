@@ -162,74 +162,59 @@ class dwApplication extends dwXMLConfig
 			
 			// Main config
 			$this -> _runmode 	= (int)$xml -> config -> application -> run;
-			if(isset($xml -> config -> application -> lang)) {
-				$this -> _lang 		= (string)$xml -> config -> application -> lang;
-			}
+
+			if($xml -> config -> application) {
+				
+				if($xml -> config -> application -> lang) {
+					$this -> _lang 		= (string)$xml -> config -> application -> lang;
+				}
+				
+				if($xml -> config -> application -> ns) {
+					$this -> _namespace = (string)$xml -> config -> application -> ns;
+				}
 			
-			if(isset($xml -> config -> application -> ns)) {
-				$this -> _namespace = (string)$xml -> config -> application -> ns;
 			}
 
 			// properties
-			if(isset($xml -> config) && isset($xml -> config -> properties) && isset($xml -> config -> properties -> property))
+			if($xml -> config -> properties && $xml -> config -> properties -> property)
 			{
-				if(is_object($xml -> config -> properties -> property)) {
-					$this -> loadPropertyConfig($xml -> config -> properties -> property);
-				} else {
-					foreach($xml -> config -> properties -> property as $xmlProperty)
-					{
-						$this -> loadPropertyConfig($xmlProperty);
-					}
+				foreach($xml -> config -> properties -> property as $xmlProperty)
+				{
+					$this -> loadPropertyConfig($xmlProperty);
 				}
 			}
 				
 			// interceptors
-			if(isset($xml -> config -> interceptors) && isset($xml -> config -> interceptors -> interceptor))
+			if($xml -> config -> interceptors && $xml -> config -> interceptors -> interceptor)
 			{
-				if(is_object($xml -> config -> interceptors -> interceptor)) {
-					$this -> loadListenerConfig($xml -> config -> listeners -> listener);
-				} else {
-					foreach($xml -> config -> interceptors -> interceptor as $xmlListenerConfig)
-					{
-						$this -> loadInterceptorConfig($xmlListenerConfig);
-					}
+				foreach($xml -> config -> interceptors -> interceptor as $xmlListenerConfig)
+				{
+					$this -> loadInterceptorConfig($xmlListenerConfig);
 				}
 			}
 
 			// connectors
-			if(isset($xml -> config -> connectors) && isset($xml -> config -> connectors -> connector)) {
-				if(is_object($xml -> config -> connectors -> connector)) {
-					$this -> loadConnectorConfig($xml -> config -> connectors -> connector);
-				} else {
-					foreach($xml -> config -> connectors -> connector as $connectorXmlConfig) {
-						$this -> loadConnectorConfig($connectorXmlConfig);
-					}	
-				}
+			if($xml -> config -> connectors && $xml -> config -> connectors -> connector) {
+				foreach($xml -> config -> connectors -> connector as $connectorXmlConfig) {
+					$this -> loadConnectorConfig($connectorXmlConfig);
+				}	
 			}
-
+			
 			// security
-			if(isset($xml -> config -> security) && isset($xml -> config -> security -> adapters) && isset($xml -> config -> security -> adapters -> adapter))
+			if($xml -> config -> security && $xml -> config -> security -> adapters && $xml -> config -> security -> adapters -> adapter)
 			{
-				if(is_object($xml -> config -> security -> adapters -> adapter)) {
-					$this -> loadSecurityAdapterConfig($xml -> config -> security -> adapters -> adapter);
-				} else {
-					foreach($xml -> config -> security -> adapters -> adapter as $xmlAdapterConfig)
-					{
-						$this -> loadSecurityAdapterConfig($xmlAdapterConfig);
-					}
+				foreach($xml -> config -> security -> adapters -> adapter as $xmlAdapterConfig)
+				{
+					$this -> loadSecurityAdapterConfig($xmlAdapterConfig);
 				}
 			}
 			
 			// plugins
-			if(isset($xml -> plugins) && isset($xml -> plugins -> plugin))
+			if($xml -> plugins && $xml -> plugins -> plugin)
 			{
-				if(is_object($xml -> plugins -> plugin)) {
-					$this -> loadPluginConfig($xml -> plugins -> plugin);
-				} else {
-					foreach($xml -> plugins -> plugin as $xmlPluginConfig)
-					{
-						$this -> loadPluginConfig($xmlPluginConfig);
-					}
+				foreach($xml -> plugins -> plugin as $xmlPluginConfig)
+				{
+					$this -> loadPluginConfig($xmlPluginConfig);
 				}
 			}
 
