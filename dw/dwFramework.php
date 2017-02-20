@@ -204,13 +204,13 @@ class dwFramework
 		if(!defined('APP_NS'))					define("APP_NS", basename(realpath(".")));
 		if(!defined('APP_INTERCEPTORS_DIR'))	define('APP_INTERCEPTORS_DIR', APP_DIR."interceptors/");
 		if(!defined('APP_CONTROLLERS_DIR'))  	define("APP_CONTROLLERS_DIR", APP_DIR."controllers/");
+		if(!defined('APP_WEBAPP_DIR'))  		define("APP_WEBAPP_DIR", APP_DIR."webapp/");
 		if(!defined('APP_WEBINF_DIR'))			define("APP_WEBINF_DIR", APP_DIR."web-inf/");
-		
+		if(!defined('APP_I18N_DIR'))			define("APP_I18N_DIR", APP_DIR."i18n/");
 
 		if(!defined('APP_RUNTIME_DIR'))			define("APP_RUNTIME_DIR", APP_WEBINF_DIR."runtime/");
 		if(!defined('APP_CACHE_DIR'))			define("APP_CACHE_DIR", APP_RUNTIME_DIR."cache/");
-		if(!defined('APP_I18N_DIR'))			define("APP_I18N_DIR", APP_DIR."i18n/");
-		if(!defined('APP_DBI_ENTITYDEF_DIR'))	define("APP_DBI_ENTITYDEF_DIR", APP_DIR."entity/");
+		if(!defined('APP_DBI_ENTITYDEF_DIR'))	define("APP_DBI_ENTITYDEF_DIR", APP_RUNTIME_DIR."entity/");
 
 		dw_require("classes/dwLogger");
 		dw_require("classes/dwAutoLoader");

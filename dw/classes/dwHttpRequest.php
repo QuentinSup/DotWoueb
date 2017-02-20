@@ -97,7 +97,11 @@ class dwHttpRequest {
 		return server::get('REQUEST_SCHEME', 'http');
 	}
 	
-	public function getHostName() {
+	public function getHost() {
+		return server::get('HTTP_HOST');
+	}
+	
+	public function getServerName() {
 		return server::get('SERVER_NAME');
 	}
 	
@@ -113,8 +117,12 @@ class dwHttpRequest {
 		return server::get('SERVER_PROTOCOL');
 	}
 	
+	public function getServerPort() {
+		return server::get('SERVER_PORT');
+	}
+	
 	public function getBaseUri() {
-		return $this -> getScheme().'://'.$this -> getHostName().$this -> getContext()."/";
+		return $this -> getScheme().'://'.$this -> getHost().$this -> getContext()."/";
 	}
 	
 	public function getClientIP() {

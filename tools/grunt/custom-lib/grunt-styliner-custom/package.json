@@ -1,0 +1,14 @@
+{
+  "name": "grunt-styliner-custom",
+  "description": "Agilite digitale Mail style inliner",
+  "version": "0.0.1",
+  "dependencies": {
+    "grunt": "~0.4.5",
+    "winston": "~0.6.2",
+    "styliner": ""
+  },
+  "files": [
+    "tasks"
+  ],
+  "directories": {}
+}
