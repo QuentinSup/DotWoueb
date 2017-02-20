@@ -133,7 +133,7 @@ class dwFrontController {
 					$controller -> endRequest($request, $response, $model);
 				
 				} else {
-					$response -> statusCode = 404;
+					$response -> statusCode = HttpStatus::NOT_FOUND;
 				}
 			}
 			
@@ -141,7 +141,7 @@ class dwFrontController {
 			dwInterceptors::forAllInterceptorsDo('terminateRequest', $request, $response, $model);
 	
 		} catch(\Exception $e) {
-			$response -> statusCode = 500;
+			$response -> statusCode = HttpStatus::INTERNAL_SERVER_ERROR;
 			dwErrorController::exceptionHandler($e);
 		}
 
