@@ -2,9 +2,7 @@
 
 namespace dw\classes\http;
 
-use dw\helpers\dwArray;
-use dw\classes\dwSocket;
-use dw\classes\dwObject;
+use dw\accessors\ary;
 
 dw_require('vendors/Requests/Requests');
 
@@ -19,14 +17,8 @@ class dwHttpSocket {
 	public static $HTTP_METHOD_PATCH = "PATCH";
 	public static $HTTP_METHOD_OPTIONS = "OPTIONS";
 	
-	private $_socket;
-
 	protected $_headers;
-	protected $_protocol = "HTTP/1.1";
-	
-	public $connectionTimeout = 30;
-	
-	
+
 	public function __construct() {
 		$this -> _headers = array();
 	}
@@ -40,13 +32,12 @@ class dwHttpSocket {
 	}
 	
 	public function send($method, $url, $data, $options = array()) {
-		
 		$response = \Requests::request($url, $this -> _headers, $data, $method, $options);
 		return $response;
 			
 	}
 
-	public static function request(\String $method, \String $url, \String $content, $headers = array(), $options = array()) {
+	public static function request($method, $url, $content, $headers = array(), $options = array()) {
 		
 		$httpsocket = new dwHttpSocket();
 		$httpsocket -> setHeaders($headers);
