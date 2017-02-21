@@ -29,6 +29,10 @@ class dwArray {
 		ary::set($this -> _array, $name, $mvalue);
 	}
 	
+	public function push($values) {
+		ary::push($this -> _array, $values);
+	}
+	
 	public function getKeys() {
 		return ary::keys($this -> _array);
 	}
