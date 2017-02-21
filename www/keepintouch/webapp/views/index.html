@@ -2,8 +2,8 @@
 <html>
 <head>
 	<title>{$title}</title>
-	<link href="{$webapp}assets/vendors/knockit/knockitjs-1.1.0.css" />
-	<script src="{$webapp}assets/vendors/knockit/knockitjs-1.1.0.js"></script>
+	<link rel="stylesheet" type="text/css" href="{$webapp}assets/vendors/knockit/knockitjs-1.1.0.css" />
+	<link rel="stylesheet" type="text/css" href="{$webapp}assets/css/index.css" />
 </head>
 <body>
 	{* includes knockitjs templates *}
@@ -11,8 +11,11 @@
 	<div id="app">
 	{include file="./{$pageId}/index.html"}
 	</div>
+	
+	<script src="{$webapp}assets/vendors/knockit/knockitjs-1.1.0.js"></script>
 	<script src="{$webapp}assets/js/app.js"></script>
 	<script src="{$webapp}views/main/js/main.js"></script>
+	
 	
 	<script type="text/javascript">
 	

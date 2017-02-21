@@ -27,7 +27,7 @@ class main extends dwBasicController {
 		
 		return 'view:./views/index.html';
 	}
-
+	
 }
 
 ?>

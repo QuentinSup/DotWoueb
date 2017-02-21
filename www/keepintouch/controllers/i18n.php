@@ -18,7 +18,7 @@ class i18n extends dwBasicController {
 	 */
 	public function root(dwHttpRequest &$request, dwHttpResponse &$response, dwModel &$model) 
 	{				
-		
+		return "json:";
 	}
 
 }
