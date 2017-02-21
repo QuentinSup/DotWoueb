@@ -54,6 +54,7 @@ module.exports = function(grunt) {
 			      expand: true,
 			      cwd: "<%= pkg.basedir %>/<%= grunt.option('app') %>/webapp/",
 			      src: ["**/*.less", "!**/_*.less", '!**/vendors{,/**/*}'],
+			      dest:"<%= pkg.basedir %>/<%= grunt.option('app') %>/webapp/",
 			      ext: ".css"
 				}]
 			},
