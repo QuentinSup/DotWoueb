@@ -54,11 +54,20 @@ class ary
 		$ary[$name] = $mvalue;
 	}
 	
-	public static function keys($ary) {
+	public static function push(&$ary, $values) 
+	{
+		foreach($values as $key => $value) {
+			ary::set($ary, $key, $value);
+		}
+	}
+	
+	public static function keys($ary) 
+	{
 		return array_keys($ary);
 	}
 	
-	public static function keyAt($ary, $offset) {
+	public static function keyAt($ary, $offset) 
+	{
 		$keys = array_keys($ary);
 		return count($keys)>$offset?$keys[$offset]:null;
 	}
