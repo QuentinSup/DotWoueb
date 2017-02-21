@@ -22,8 +22,7 @@ class request extends dwBasicController {
 	{
 		$json = $request -> getRequestBody();
 		
-		$r = new dwHttpSocket();
-		$resp = $r -> send('POST', 'http://localhost:8080/myapi/api/QuentinSup/keepintouch/request', $json, array("Content-Type" => "application/json; charset=utf8"));
+		$resp = dwHttpSocket::request('POST', 'http://localhost:8080/myapi/api/QuentinSup/keepintouch/request', $json, array("Content-Type" => "application/json; charset=utf8"));
 		
 		$response -> statusCode = $resp -> status_code;
 		return $resp -> body;
