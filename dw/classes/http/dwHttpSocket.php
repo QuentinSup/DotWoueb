@@ -10,12 +10,13 @@ dw_require('vendors/Requests/Requests');
 
 class dwHttpSocket {
 	
-	public static $HTTP_METHOD_GET = "GET";
-	public static $HTTP_METHOD_POST = "POST";
-	public static $HTTP_METHOD_DELETE = "DELETE";
-	public static $HTTP_METHOD_PUT = "PUT";
-	public static $HTTP_METHOD_PATCH = "PATCH";
-	public static $HTTP_METHOD_OPTIONS = "OPTIONS";
+	const HTTP_METHOD_GET = "GET";
+	const HTTP_METHOD_POST = "POST";
+	const HTTP_METHOD_DELETE = "DELETE";
+	const HTTP_METHOD_PUT = "PUT";
+	const HTTP_METHOD_PATCH = "PATCH";
+	const HTTP_METHOD_OPTIONS = "OPTIONS";
+	const HTTP_METHOD_TRACE = "TRACE";
 	
 	protected $_headers;
 
@@ -27,8 +28,8 @@ class dwHttpSocket {
 		ary::push($this -> _headers,  $headers);
 	}
 	
-	public function Get($url, $content) {
-		return $this -> send(self::$HTTP_METHOD_GET, $url, null);
+	public function Get($url, $content, $options = array()) {
+		return $this -> send(self::HTTP_METHOD_GET, $url, null, $options);
 	}
 	
 	public function send($method, $url, $data, $options = array()) {
