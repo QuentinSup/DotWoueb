@@ -49,6 +49,10 @@ class dwFile {
 		return file_get_contents($sfilename);
 	}
 	
+	public static function getBase64File($filename) {
+		return base64_encode(self::getContents($filename));
+	}
+	
 	/**
 	 * cSize()
 	 * Renvoi la plus haute valeur de la taille d'un fichier
