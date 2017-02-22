@@ -9,6 +9,7 @@ use dw\classes\dwHttpResponse;
 use dw\classes\dwModel;
 use dw\classes\controllers\dwBasicController;
 use dw\enums\HttpStatus;
+use dw\connectors\dbi\dbi;
 
 /**
  * API
@@ -82,7 +83,7 @@ class index extends dwBasicController {
 			$response->contentType = $doc->contentType;
 		}
 		
-		return $doc->data;
+		return "text:".$doc->data;
 	}
 	
 	/**
@@ -184,6 +185,43 @@ class index extends dwBasicController {
 		$response->statusCode = HttpStatus::CREATED;
 		
 		return $doc->id;
+	}
+	
+	/**
+	 * Modifie entièrement le contenu d'une API
+	 * @Mapping(value = ':categoryName/:id', method = "put", produces = 'text/html; charset=utf8')
+	 */
+	public function putAPI(dwHttpRequest $request, dwHttpResponse $response, dwModel $model) {
+		$doc = self::$apiEntity;
+		$p_userName = $request->Path ( 'userName' );
+		$p_appName = $request->Path ( 'appName' );
+		$p_categoryName = $request->Path ( 'categoryName' );
+		$p_id = $request->Path ( 'id');
+	
+		$doc->user = $p_userName;
+		$doc->app = $p_appName;
+		$doc->category = $p_categoryName;
+		$doc->id = $p_id;
+			
+		$doc -> setPrimaryKeys(array("user", "app", "category", "id"));
+		
+		$doc->data = $request->getRequestBody ();
+		
+		$ods = $doc->update ();
+	
+		if (! $ods) {
+			$response->statusCode = HttpStatus::INTERNAL_SERVER_ERROR;
+			return;
+		}
+	
+		if ($ods->getAffectedRows () == 0) {
+			$response->statusCode = HttpStatus::NO_CONTENT;
+			return;
+		}
+	
+		$response->statusCode = HttpStatus::OK;
+	
+		return null;
 	}
 	
 	/**
