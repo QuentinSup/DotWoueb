@@ -11,19 +11,26 @@ var webapp;
         var EmailUIField = kit.fields.EmailUIField;
         var ToggleUIField = kit.fields.ToggleUIField;
         var TextUIField = kit.fields.TextUIField;
+        var TextAreaUIField = kit.fields.TextAreaUIField;
         var Query = kit.helpers.Query;
         var MainPage = (function (_super) {
             __extends(MainPage, _super);
             function MainPage() {
                 _super.call(this, null);
+                this.FromName = new TextUIField('Votre nom', null, true);
+                this.FromEmail = new EmailUIField('Votre adresse email', null, true);
+                this.FromMessage = new TextAreaUIField('Votre message', null, false);
+                this.ToName = new TextUIField('Nom de votre correspondant', null, true);
+                this.ToEmail = new EmailUIField('Son adresse email', null, true);
                 this.AdrEmailCoche = new ToggleUIField('EmailCoche', true, false, false);
                 this.AdrEmailCoche.showLabel(false);
-                this.AdrEmail = new EmailUIField('Adresse email', null, false);
-                this.AdrEmail.placeholder("Entrer une adresse email");
+                this.AdrEmail = new EmailUIField('Vérifier son adresse email', null, false);
+                this.AdrEmail.placeholder("Saisissez la dernière adresse email connue");
                 this.AdrEmail.isDisabled.makeTrueIfNot(this.AdrEmailCoche.dataValue);
                 this.AdrPostalCoche = new ToggleUIField('AdrPostaleCoche', true, false, false);
                 this.AdrPostalCoche.showLabel(false);
-                this.AdrPostalLigne1 = new TextUIField('Adresse postale', null, false);
+                this.AdrPostalLigne1 = new TextUIField('Vérifier son adresse postale', null, false);
+                this.AdrEmail.placeholder("Saisissez la dernière adresse connue");
                 this.AdrPostalLigne2 = new TextUIField('', null, false);
                 this.AdrPostalLigne3 = new TextUIField('', null, false);
                 this.AdrPostalCdPost = new TextUIField('', null, false);
@@ -40,15 +47,18 @@ var webapp;
              *
              */
             MainPage.prototype.onSubmit = function () {
-                var json = [];
+                var json = {};
+                var jsonFrom = {};
+                var jsonTo = {};
+                var requests = [];
                 if (this.AdrEmailCoche.dataValue()) {
-                    json.push({
+                    requests.push({
                         'type': 'email',
                         'value': this.AdrEmail.dataValue()
                     });
                 }
                 if (this.AdrPostalCoche.dataValue()) {
-                    json.push({
+                    requests.push({
                         'type': 'adress',
                         'value': {
                             'street-address': this.AdrPostalLigne1.dataValue(),
@@ -58,14 +68,22 @@ var webapp;
                         }
                     });
                 }
-                if (json.length > 0) {
+                jsonTo['name'] = this.ToName.dataValue();
+                jsonTo['email'] = this.ToEmail.dataValue();
+                jsonFrom['name'] = this.FromName.dataValue();
+                jsonFrom['message'] = this.FromMessage.dataValue();
+                jsonFrom['reply_email'] = this.FromEmail.dataValue();
+                json['to'] = jsonTo;
+                json['from'] = jsonFrom;
+                json['requests'] = requests;
+                if (requests.length > 0) {
                     Query.POST(app.servicesPath + 'request', json, function (data, status) {
                     });
                 }
             };
             return MainPage;
         })(ViewModel);
-        new MainPage().applyBindings("#test");
+        new MainPage().applyBindings("#app");
     })(keepintouch = webapp.keepintouch || (webapp.keepintouch = {}));
 })(webapp || (webapp = {}));
 //# sourceMappingURL=main.js.map

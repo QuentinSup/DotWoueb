@@ -2,8 +2,9 @@
 <html>
 <head>
 	<title>{$title}</title>
-	<link rel="stylesheet" type="text/css" href="{$webapp}assets/vendors/knockit/knockitjs-1.1.0.css" />
-	<link rel="stylesheet" type="text/css" href="{$webapp}assets/css/index.css" />
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lato:400,700">
+	<link rel="stylesheet" type="text/css" href="{$host}assets/vendors/knockit/knockitjs-1.1.0.css" />
+	<link rel="stylesheet" type="text/css" href="{$host}assets/css/index.css" />
 </head>
 <body>
 	{* includes knockitjs templates *}
@@ -12,10 +13,9 @@
 	{include file="./{$pageId}/index.html"}
 	</div>
 	
-	<script src="{$webapp}assets/vendors/knockit/knockitjs-1.1.0.js"></script>
-	<script src="{$webapp}assets/js/app.js"></script>
-	<script src="{$webapp}views/main/js/main.js"></script>
-	
+	<script src="{$host}assets/vendors/knockit/knockitjs-1.1.0.js"></script>
+	<script src="{$host}assets/js/app.js"></script>
+	<script src="{$host}views/{$pageId}/js/main.js"></script>
 	
 	<script type="text/javascript">
 	

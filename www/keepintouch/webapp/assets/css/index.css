@@ -9,7 +9,7 @@ h1 {
   font-family: 'Montserrat', Arial, Helvetica, Helvetica Neue, sans-serif;
   margin: 0px;
   padding: 0px 0px 6px 0px;
-  color: #fafafa;
+  color: #1b96fe;
   font-size: 20px;
   text-transform: inherit;
 }
@@ -17,18 +17,18 @@ h1 {
   font-family: 'Montserrat', Arial, Helvetica, Helvetica Neue, sans-serif;
   margin: 0px;
   padding: 0px 0px 6px 0px;
-  color: #fafafa;
+  color: #1b96fe;
   font-size: 20px;
   text-transform: inherit;
   font-weight: 700;
 }
 h2 {
   font-family: 'Montserrat', Arial, Helvetica, Helvetica Neue, sans-serif;
-  margin: 25px 0 10px 0;
-  padding: 0.5em;
-  line-height: 1.2em;
-  color: #666666;
-  font-size: 24px;
+  margin: 0em;
+  padding: 0.5em 0em;
+  line-height: 1.1em;
+  color: #253039;
+  font-size: 20px;
   font-weight: normal;
   text-transform: uppercase;
 }
@@ -315,7 +315,7 @@ select,
 input,
 textarea {
   font-family: 'Lato', Arial, Helvetica, Helvetica Neue, sans-serif;
-  color: #666666;
+  color: #253039;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -531,9 +531,9 @@ fieldset > legend > label {
 }
 .form-label {
   text-align: left;
-  font-size: 1em;
-  color: #666666;
-  padding: 5px 4px;
+  font-size: 1.3em;
+  color: #253039;
+  padding: 7px 6px;
 }
 .form-label div.label {
   display: inline-block;
@@ -543,7 +543,7 @@ fieldset > legend > label {
   line-height: 1.2em;
 }
 .form-label label {
-  font-weight: normal !important;
+  font-weight: bold !important;
   white-space: normal;
   display: inline !important;
 }
@@ -566,9 +566,9 @@ fieldset > legend > label {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
-  color: #666666 !important;
-  border-color: #717171 !important;
-  border-width: 2px !important;
+  color: #555459 !important;
+  border-color: #98989a !important;
+  border-width: 1px !important;
 }
 .form-checked .ui-field-valid input:valid,
 .ui-field-visited.ui-field-valid input:valid,
@@ -577,9 +577,9 @@ fieldset > legend > label {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
-  color: #666666 !important;
-  border-color: #717171 !important;
-  border-width: 2px !important;
+  color: #555459 !important;
+  border-color: #98989a !important;
+  border-width: 1px !important;
 }
 .form-checked .ui-field-warned .form-label,
 .ui-field-visited.ui-field-warned .form-label {
@@ -590,9 +590,9 @@ fieldset > legend > label {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
-  color: #666666 !important;
-  border-color: #717171 !important;
-  border-width: 2px !important;
+  color: #555459 !important;
+  border-color: #98989a !important;
+  border-width: 1px !important;
 }
 .form-checked .ui-field-warned input:valid,
 .ui-field-visited.ui-field-warned input:valid,
@@ -601,9 +601,9 @@ fieldset > legend > label {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
-  color: #666666 !important;
-  border-color: #717171 !important;
-  border-width: 2px !important;
+  color: #555459 !important;
+  border-color: #98989a !important;
+  border-width: 1px !important;
 }
 .form-checked .ui-field-invalid .form-label,
 .ui-field-visited.ui-field-invalid .form-label {
@@ -615,7 +615,7 @@ fieldset > legend > label {
   background-image: none !important;
   filter: none !important;
   border-color: #DBC2C2 !important;
-  border-width: 2px ! important;
+  border-width: 1px ! important;
 }
 .form-checked .ui-field-invalid input:invalid,
 .ui-field-visited.ui-field-invalid input:invalid,
@@ -625,7 +625,7 @@ fieldset > legend > label {
   background-image: none !important;
   filter: none !important;
   border-color: #DBC2C2 !important;
-  border-width: 2px ! important;
+  border-width: 1px ! important;
 }
 .form-checked .ui-group-valid .form-label,
 .ui-group-visited.ui-group-valid .form-label {
@@ -658,24 +658,24 @@ fieldset > legend > label {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
-  color: #666666 !important;
-  border-color: #717171 !important;
-  border-width: 2px !important;
+  color: #555459 !important;
+  border-color: #98989a !important;
+  border-width: 1px !important;
 }
 .input-valid {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
-  color: #666666 !important;
-  border-color: #717171 !important;
-  border-width: 2px !important;
+  color: #555459 !important;
+  border-color: #98989a !important;
+  border-width: 1px !important;
 }
 .input-invalid {
   background-color: #ffffff !important;
   background-image: none !important;
   filter: none !important;
   border-color: #DBC2C2 !important;
-  border-width: 2px ! important;
+  border-width: 1px ! important;
 }
 /****************************************************************
  * TEXT CONTROLS
@@ -684,7 +684,7 @@ input,
 select,
 select option,
 textarea {
-  color: #666666;
+  color: #555459;
   font-family: 'Lato', Arial, Helvetica, Helvetica Neue, sans-serif;
 }
 .ui-field-select {
@@ -742,20 +742,20 @@ input[type="tel"],
 select,
 textarea {
   text-wrap: normal;
-  border-color: #717171;
+  border-color: #98989a;
   box-sizing: border-box;
-  padding: 6px 2px;
-  border-width: 2px;
+  padding: 14px 13px;
+  border-width: 1px;
   border-style: solid;
-  font-size: 1em;
+  font-size: 16px;
   outline: none;
   width: 100%;
   background-color: #ffffff;
   background-image: none;
   filter: none;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 0.25rem;
+  -moz-border-radius: 0.25rem;
+  border-radius: 0.25rem;
   -webkit-transition: background 0s, background-color 0s, border-color 0s;
   -moz-transition: background 0s, background-color 0s, border-color 0s;
   -o-transition: background 0s, background-color 0s, border-color 0s;
@@ -865,7 +865,7 @@ a[data-role="button"] {
   font-family: 'Lato', Arial, Helvetica, Helvetica Neue, sans-serif;
   line-height: inherit;
   font-weight: bold;
-  font-size: 1em !important;
+  font-size: 16px !important;
   background-color: #474340 !important;
   padding: 8px 13px !important;
   border-color: #474340 !important;
@@ -941,14 +941,14 @@ a[data-role="button"][checked] {
   -moz-border-radius: 4px;
   border-radius: 4px;
   padding: 12px;
-  color: #666666;
+  color: #253039;
   background-color: #feeacc;
   border: 1px solid #feeacc;
 }
 .notification.blank {
   padding-left: 28px;
   position: relative;
-  color: #666666;
+  color: #253039;
   background-color: transparent;
   border-color: gray;
 }
@@ -967,7 +967,7 @@ a[data-role="button"][checked] {
   position: relative;
 }
 .notification.info {
-  color: #666666;
+  color: #253039;
   background-color: #C5E1E5;
   border-color: #C5E1E5;
   position: relative;
@@ -977,7 +977,7 @@ a[data-role="button"][checked] {
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
-  color: #666666;
+  color: #253039;
   position: relative;
   padding: 0px;
   border: 1px solid #808080;
@@ -992,7 +992,7 @@ a[data-role="button"][checked] {
   font-weight: bold;
 }
 .notification.warn {
-  color: #666666;
+  color: #253039;
   background-color: transparent;
   border-color: gray;
   padding-left: 28px;
@@ -1041,7 +1041,7 @@ a[data-role="button"][checked] {
 }
 .ui-dialog-titlebar {
   border-bottom: 0px solid #fff !important;
-  color: #666666;
+  color: #253039;
   font-family: 'Lato', Arial, Helvetica, Helvetica Neue, sans-serif;
   font-size: 1.1em;
 }
@@ -1053,7 +1053,7 @@ a[data-role="button"][checked] {
   background: none !important;
   border: 0px !important;
   font-weight: normal;
-  color: #666666;
+  color: #253039;
   font-family: 'Lato', Arial, Helvetica, Helvetica Neue, sans-serif;
   font-size: 1.1em;
   border-bottom: 0px solid #fff !important;
@@ -1062,7 +1062,7 @@ a[data-role="button"][checked] {
   border-radius: 0px;
 }
 .ui-datepicker-header {
-  color: #666666;
+  color: #253039;
 }
 select.ui-datepicker-year {
   width: 75px !important;
@@ -1103,7 +1103,7 @@ label {
 }
 .input-group-addon {
   font-size: 1.1em;
-  padding: 6px 2px;
+  padding: 14px 13px;
   background-color: #fff;
   color: #7ECB00;
   border-color: #fff;
@@ -1117,7 +1117,7 @@ label {
   border-spacing: 0px !important;
 }
 .btn-group {
-  border: 2px solid transparent !important;
+  border: 1px solid transparent !important;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -1125,7 +1125,7 @@ label {
 }
 .btn-group > .btn {
   padding: 6px 27px !important;
-  font-size: 1em !important;
+  font-size: 16px !important;
   border-top-width: 0px !important;
   border-bottom-width: 0px !important;
   border-left-width: 1px !important;
@@ -1451,7 +1451,7 @@ fieldset > legend {
   font-family: 'Montserrat', Arial, Helvetica, Helvetica Neue, sans-serif;
 }
 fieldset.ui-widget > legend {
-  color: #666666;
+  color: #253039;
   margin-bottom: 6px;
   width: 100%;
   text-align: left;
@@ -1471,10 +1471,10 @@ fieldset.ui-widget > legend.ui-state-active {
   margin-top: 1px;
 }
 .ui-datepicker a {
-  color: #666666;
+  color: #253039;
 }
 .ui-datepicker thead th {
-  color: #666666;
+  color: #253039;
 }
 .ui-datepicker td {
   border: 1px solid #fefefe;
@@ -1482,7 +1482,7 @@ fieldset.ui-widget > legend.ui-state-active {
 }
 .ui-datepicker td a.ui-state-active {
   background-color: #C5E1E5 !important;
-  color: #666666 !important;
+  color: #253039 !important;
 }
 .ui-datepicker td a.ui-state-hover {
   background-color: #177a81 !important;
@@ -1500,7 +1500,7 @@ fieldset.ui-widget > legend.ui-state-active {
 }
 .ui-field-textonly {
   padding: 0px;
-  font-size: 1em;
+  font-size: 16px;
 }
 .ui-group-date-multifield input {
   text-align: center;
@@ -1743,21 +1743,47 @@ fieldset.ui-widget > legend.ui-state-active {
   background: -o-linear-gradient(#474340, #474340);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#474340', endColorstr='#474340', GradientType=0);
 }
-.page {
-  background-color: #fafafa;
-  color: rgba(255, 255, 255, 0.75);
-}
 .page .head {
-  background-color: #24292e;
-  border-bottom: 2px solid #efefef;
-  padding: 1em;
+  padding: .5em;
+  border-bottom: #83bec5;
 }
 .page .body {
   padding: 2em;
-  background: #ffffff;
+}
+.page .body-head {
+  padding: 1em;
+  border-bottom: 1px solid #eee;
+}
+.text-sublime {
+  font-weight: bold;
 }
 input {
-  border-top: 0px !important;
-  border-left: 0px !important;
-  border-right: 0px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+h3 {
+  font-family: 'Montserrat', Arial, Helvetica, Helvetica Neue, sans-serif;
+  margin: 0px;
+  padding: 0.5em 0em;
+  line-height: 1.2em;
+  color: #000000;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-transform: inherit;
+}
+.requiredInput {
+  font-weight: 900;
+  text-shadow: none;
+  color: #e32072;
+  font-size: 2.1em;
+  vertical-align: bottom;
+}
+.request-message {
+  background-color: #404040;
+  padding: 1.5em;
+}
+.request-message pre {
+  color: #fff;
+}
+.responsive-image img {
+  width: 100%;
 }

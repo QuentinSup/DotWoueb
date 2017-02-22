@@ -9,6 +9,22 @@
 		<div class="row">
 			<div class="col-sm-12 col-lg-8 col-lg-offset-2">
 				<form novalidate>
+					<h3>Demandeur</h3>
+					<div class="row">
+						<!-- ko template: { name: 'ui-field-template', data: FromName } --><!-- /ko -->
+					</div>
+					<div class="row">
+						<!-- ko template: { name: 'ui-field-template', data: FromEmail } --><!-- /ko -->
+					</div>
+					<!-- ko template: { name: 'ui-field-template', data: FromMessage } --><!-- /ko -->
+					<h3>Personne à contacter</h3>		
+					<div class="row">
+						<!-- ko template: { name: 'ui-field-template', data: ToName } --><!-- /ko -->
+					</div>
+					<div class="row">
+						<!-- ko template: { name: 'ui-field-template', data: ToEmail } --><!-- /ko -->
+					</div>
+					<h3>Informations à vérifier</h3>		
 					<div class="row">
 						<div class="col-xs-3 col-sm-1">
 						<!-- ko template: { name: 'ui-field-template', data: AdrEmailCoche } --><!-- /ko -->
