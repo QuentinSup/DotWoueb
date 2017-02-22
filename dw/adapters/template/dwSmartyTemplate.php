@@ -15,18 +15,28 @@ class dwSmartyTemplate extends \Smarty
 	protected static $_workDir = './';
 	protected static $_defaultCaching = false;
 	
-	public static function &factory($sview, $amodel = array(), $dir_tpl = null, $bcaching = null)
+	/**
+	 * 
+	 * @param unknown $dir_tpl
+	 * @param unknown $bcaching
+	 * @return \dw\adapters\template\dwSmartyTemplate
+	 */
+	public static function &factory($dir_tpl = null, $bcaching = null)
 	{
-		$tpl = new self($dir_tpl, $bcaching);
+		return new self($dir_tpl, $bcaching);
+	}
+	
+	/**
+	 * 
+	 * @param unknown $sview
+	 * @param array $amodel
+	 * @return unknown
+	 */
+	public static function renderize($sview, $amodel = array())
+	{
+		$tpl = new self();
 		$tpl -> assign($amodel);
-		if(!is_null($sview))
-		{
-			$ary = $tpl -> fetch($sview);
-			unset($tpl);
-			return $ary;
-		} else {
-			return $tpl;
-		}
+		return $tpl -> render($sview);
 	}
 	
 	/**
