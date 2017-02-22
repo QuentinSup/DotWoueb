@@ -11,7 +11,7 @@ define("DW_DEFAULT_ENCODING", "ISO-8859-1");
 use dw\connectors\dbi\dbi;
 use dw\accessors\server;
 use dw\classes\dwLogger;
-use dw\classes\AutoLoader;
+use dw\classes\dwAutoLoader;
 use dw\classes\dwHttpRequest;
 use dw\helpers\dwFile;
 use dw\dwFrontController;
@@ -216,7 +216,7 @@ class dwFramework
 		dw_require("classes/dwAutoLoader");
 		dw_require("dwFrontController");
 		
-		self::$_autoLoader = new AutoLoader(array("dw" => DW_BASE_DIR));
+		self::$_autoLoader = new dwAutoLoader(array("dw" => DW_BASE_DIR));
 				
 		// Configure loggers
 		dwLogger::configure(DW_WWW_DIR.'log4php.xml');

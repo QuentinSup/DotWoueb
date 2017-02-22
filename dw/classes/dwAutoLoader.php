@@ -5,7 +5,7 @@ namespace dw\classes;
 /**
  * Autoloader
  */
-class AutoLoader {
+class dwAutoLoader {
 	
 	// List of namespaces and paths to map for
 	protected $_namespacesMapping = [];
@@ -70,15 +70,17 @@ class AutoLoader {
 								
 				require_once($route['path'].$classPath);
 
-				if(self::logger() -> isTraceEnabled()) {
-					self::logger() -> trace("Resolve class '$className' : ".$route['path']."$classPath");
+				if(self::logger() -> isDebugEnabled()) {
+					self::logger() -> debug("Resolve class '$className' : ".$route['path']."$classPath");
 				}
 				
 				return;
 			}
 		}		
 		
-		self::logger() -> warn("Unable to resolve class '$className'");
+		if(self::logger() -> isTraceEnabled()) {
+			self::logger() -> trace("Unable to resolve class '$className'");
+		}
 		
 	}
 	
