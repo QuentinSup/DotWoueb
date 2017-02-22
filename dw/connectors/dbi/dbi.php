@@ -235,6 +235,19 @@ class dbi_dataEntity extends dwObject
 		}
 	}
 	
+	public function setPrimaryKeys($names = array()) {
+		$this -> _aprimaryKey = $names;
+	}
+	
+	public function addPrimaryKey($names) {
+		if(is_string($names)) { $names = array($names); }
+		foreach($names as $name) {
+			if(!in_array($this -> _aprimaryKey, $name)) {
+				$this -> _aprimaryKey[] = $name;
+			}
+		}
+	}
+	
 	public function toArray()
 	{
 		return $this -> getAttributes();
@@ -508,6 +521,9 @@ class dbi_dataSet
 	protected $_ores   = null;
 	protected $_odb    = null;
 	protected $_squery = '';
+	protected $_affectedRows = 0;
+	protected $_numRows = 0;
+	protected $_fetchable = false;
 	public $record  = null;
 
 	public function __construct($odb, $squery, $ores)
@@ -515,6 +531,13 @@ class dbi_dataSet
 		$this -> _odb    = $odb;
 		$this -> _ores   = $ores;
 		$this -> _squery = $squery;
+		$this -> _affectedRows = $this -> _odb -> getAffectedRows();
+		
+		if($ores instanceof \mysqli_result) {
+			$this -> _numRows = $this -> _odb -> getNumRows($ores);
+			$this -> _fetchable = true;
+		}
+		
 	}
 	
 	public function fetchArray()
@@ -550,12 +573,12 @@ class dbi_dataSet
 
 	public function getNumRows()
 	{
-		return @$this -> _odb -> getNumRows($this -> _ores);
+		return $this -> _numRows;
 	}
 	
 	public function getAffectedRows()
 	{
-		return $this -> _odb -> getAffectedRows();
+		return $this -> _affectedRows;
 	}
 
 	public function getQuery()
@@ -896,17 +919,22 @@ class dbi
   	$squery  = $this -> _odb -> prepareQuery($squery, $aparams, $ioffset, $ilimit, $bescapequery);
   	
   	if(self::logger() -> isDebugEnabled()) {
-  		self::logger() -> debug($squery);
+  		self::logger() -> debug("Execute query: ".$squery);
   	}
 
   	$idquery = $this -> _startQuery($squery);
-  	$ores    = $this -> _odb -> query($squery, $ioffset, $ilimit);
+  	$ores    = $this -> _odb -> query($squery);
   	if(!$ores === false)
   	{
   		$ods 	 = new dbi_dataSet($this -> _odb, $squery, $ores);
   		$this -> _endQuery($idquery, $squery, $ods, $iwho);
     	return $ods;
   	} else {
+  		
+  		if(self::logger() -> isErrorEnabled()) {
+  			self::logger() -> error("Failed to execute query: [".$this -> getLastError()."] ".$this -> getLastErrorMessage());
+  		}
+  		
   		$this -> _endQuery($idquery, $squery, null, $iwho);
   		return null;
   		//throw new dwException($this -> _odb -> getLastErrorMessage(), E_DBI_QUERY);
@@ -1121,6 +1149,14 @@ class dbi
   }
   
   /**
+   * 
+   * @return unknown
+   */
+  public function getLastErrorMessage() {
+  	return $this -> _odb -> getLastErrorMessage();
+  }
+  
+  /**
    * Demarre une transaction
    */
   public function startTransaction() 
@@ -1185,6 +1221,14 @@ class dbi
   		$func = $this -> _fendquery;
   		return $func($this, $idquery, $ods);
   	}
+  	
+  	if($ods) {
+	  	if(self::logger() -> isDebugEnabled()) {
+	  		self::logger() -> debug("Query return ".$ods -> getNumRows()." row(s) / ".$ods -> getAffectedRows(). " affected row(s)");
+	  	}
+  	}
+  	
+  	
   	if(self::getMode() != DBI_MODE_RELEASE)
   	{
   		switch(self::getMode())
