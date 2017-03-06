@@ -20,7 +20,7 @@ class request extends dwBasicController {
 	/**
 	 * 
 	 * @var unknown
-	 * @Logger
+	 * @Autowire(value='logger')
 	 */
 	public static $log;
 	
@@ -36,18 +36,46 @@ class request extends dwBasicController {
 	 */
 	public function push(dwHttpRequest &$request, dwHttpResponse &$response, dwModel &$model)
 	{
-		$json = $request -> getRequestBody();
+		
+		if(self::$log -> isTraceEnabled()) {
+			self::$log -> trace("Creation d'une requête");
+		}
+		
+		$content = $request -> getRequestBody();
 
-		$str = dwSmartyTemplate::render("emails/creation.html", $model -> toArray());
+		$resp = dwHttpSocket::request('POST', 'http://localhost:8080/myapi/api/QuentinSup/keepintouch/request', $content, array("Content-Type" => "application/json; charset=utf8"));
+		
+		$response -> statusCode = $resp -> status_code;
 
-		if(self::$smtp -> send($doc -> email, null, null, "Demande de confirmation de coordonnées", $str)) {
+		if(self::$log -> isDebugEnabled()) {
+			self::$log -> debug("Code retour de la création de requête : ".$resp -> status_code);
+		}
+		
+		$p_id = null;
+		
+		if($resp -> status_code == HttpStatus::CREATED) {
+
+			$p_id = $resp -> body;
+	
+			$json = json_decode($content);
+
+			$mail_model = new dwObject();
+			$mail_model -> img_logo = dwFile::getBase64File('assets/images/logo.png');
+			$mail_model -> send_name = $json -> from -> name;
+			$mail_model -> name = $json -> to -> name;
+			$mail_model -> url = $request -> getBaseUri()."/request/".$p_id;
+
+			$str = dwSmartyTemplate::renderize("../emails/creation.html", $mail_model -> toArray());
+		
+			if(!self::$smtp -> send($json -> to -> email, null, null, "Demande de confirmation de coordonnées", $str)) {
+				self::$log -> error("Error sending email to ".$json -> from -> email);
+			}
 
 		}
 		
-		$resp = dwHttpSocket::request('POST', 'http://localhost:8080/myapi/api/QuentinSup/keepintouch/request', $json, array("Content-Type" => "application/json; charset=utf8"));
 		
-		$response -> statusCode = $resp -> status_code;
-		return $resp -> body;
+		
+		return $p_id;
 		
 	}
 	
@@ -69,15 +97,13 @@ class request extends dwBasicController {
 			$mail_model -> img_logo = dwFile::getBase64File('assets/images/logo.png');
 			$mail_model -> send_name = $json -> from -> name;
 			$mail_model -> name = $json -> to -> name;
-			$mail_model -> url = $request -> getBaseUri()."/request/".$p_id;
+			$mail_model -> url = $request -> getBaseUri()."/request/".$p_id."?consult=1";
+
+			$str = dwSmartyTemplate::renderize("../emails/confirmation.html", $mail_model -> toArray());
 			
-			print_r($mail_model);
+			self::$smtp -> setFrom($json -> to -> email);
 			
-			$str = dwSmartyTemplate::renderize("../emails/creation.html", $mail_model -> toArray());
-			
-			self::$smtp -> setFrom($json -> from -> reply_email);
-			
-			if(!self::$smtp -> send($json -> to -> email, null, null, "Demande de confirmation de coordonnées", $str)) {
+			if(!self::$smtp -> send($json -> from -> reply_email, null, null, "Confirmation de coordonnées", $str)) {
 				self::$log -> error("Error sending email to ".$json -> from -> email);
 			}
 			
