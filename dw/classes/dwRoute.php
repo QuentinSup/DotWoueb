@@ -115,7 +115,8 @@ class dwRoute {
 		$ary = explode(",", $haystack);
 		$needleType = explode(";", $needle)[0];
 		foreach($ary as $value) {
-			if($value == $needleType) {
+			$valueType = explode(";", $value)[0];
+			if($valueType == $needleType) {
 				return true;
 			}
 		}	
