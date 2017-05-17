@@ -7,9 +7,9 @@ use dw\classes\dwException;
 use dw\classes\dwLogger;
 
 /**
- * G貥 l'interface avec la base de donnees
+ * Gere l'interface avec la base de donnees
  * @author Quentin Supernant
- * @version 3.0
+ * @version 3.2
  * @package dotWoueb
  */
 
@@ -47,6 +47,7 @@ class dbi_dataEntity extends dwObject
 	protected $_odataSet = null;
 	protected $_odb    = null;
 	protected $_isfetched = false;
+	protected $_bforeachrow = null;
 
 	public function __construct($odb, $sentity, $aattributes, $aprimaryKey = null)
 	{
@@ -64,6 +65,18 @@ class dbi_dataEntity extends dwObject
 		} else {
 			throw new dwException(E_DBI_UNKNOW_ATTRIBUTE);
 		}
+	}
+	
+	public function factory() {
+		return $this -> _odb -> factory($this -> _sentity);
+	}
+	
+	public function setForEachRow($b) {
+		$this -> _bforeachrow = $b;
+	}
+	
+	public function isForEachRow() {
+		return $this -> _bforeachrow; 
 	}
 
 	public function isAttribute($sattr)
@@ -132,12 +145,31 @@ class dbi_dataEntity extends dwObject
 			}
 		}
 		$this -> setFrom($avalues);
-		$this -> _odataSet = $this -> _odb -> select($this -> getTableName(), $this -> getAttributes(true), $whereAdd, $sorderBy, $ioffset, $ilimit);
+		$this -> _odataSet = $this -> _odb -> select($this -> getTableName(), $this -> getAttributes(true), $whereAdd, $sorderBy, $ioffset, $ilimit, '*', $this -> _bforeachrow);
 		if($bfetch)
 		{
 			$this -> fetch();
 		}
 		return $this -> _odataSet -> getNumRows() > 0;
+	}
+	
+	/**
+	 * plist()
+	 * Alternative to find()
+	 */
+	public function plist($orderBy = null, $ioffset = null, $ilimit = null, $whereAdd = null)
+	{
+		return $this -> find(null, $orderBy, $ioffset, $ilimit, $whereAdd, false);
+	}
+	
+	/**
+	 * all()
+	 * Alternative to plist()
+	 */
+	public function all($orderBy = null, $ioffset = null, $ilimit = null, $whereAdd = null)
+	{
+		$this -> _bforeachrow = false;
+		return $this -> find(null, $orderBy, $ioffset, $ilimit, $whereAdd, false);
 	}
 	
 	/**
@@ -169,7 +201,7 @@ class dbi_dataEntity extends dwObject
 	
 	public function castSql($svalue)
 	{
-		return "@".$svalue;
+		return "@{".$svalue."}";
 	}
 
 	public function __set($sattr, $mvalue)
@@ -317,12 +349,10 @@ class dbi_dataEntity extends dwObject
 	public function indate($avalues = null)
 	{
 		$this -> setFrom($avalues);
-		if($this -> keyExists())
-		{
+		if($this -> keyExists()) {
 			return $this -> update();
-		} else {
-			return $this -> insert();
 		}
+		return $this -> insert();
 	}
 
 	private function _setArrayFrom($ary, $aattributes, $ball = true)
@@ -943,7 +973,7 @@ class dbi
 
  	/**
  	 * select()
- 	 * Effectue une requ괥 de s鬥ction
+ 	 * Effectue une requete de selection
  	 * @param string $sentity nom de la table
  	 * @param array $aattributes tableau associatif column => value des champs ࠭ette ࠪour
 	 * @param string $whereAdd clause SQL WHERE complémentaire
@@ -954,7 +984,7 @@ class dbi
 	 * @param string $mselectList Liste de champs de la clause Select
  	 * @return dbi_dataSet
  	 */
-	public function select($sentity, $aattributes, $whereAdd = null, $squeryEnd = null, $ioffset = null, $ilimit = null, $mselectList = '*')
+	public function select($sentity, $aattributes, $whereAdd = null, $squeryEnd = null, $ioffset = null, $ilimit = null, $mselectList = '*', $bforeachrow = null)
 	{
 		$awhere = array();
 		if(is_array($mselectList))
@@ -981,7 +1011,7 @@ class dbi
 				}
 			}
 		}
-		if(self::$_bforeachrow && empty($wherePart))
+		if((is_null($bforeachrow)?self::$_bforeachrow:$bforeachrow) && empty($wherePart))
 		{
 			throw new dwException(E_DBI_FOREACHROW);
 		}
@@ -1010,11 +1040,11 @@ class dbi
 
  	/**
  	 * update()
- 	 * Effectue une requ괥 de mise ࠪour
+ 	 * Effectue une requete de mise ࠪour
  	 * @param string $sentity nom de la table
  	 * @param array $aattributes tableau associatif column => value des champs ࠭ette ࠪour
- 	 * @param array $akeys liste des cl鳠primaires de la table (pour la clause Where) 
- 	 * @param string $whereAdd clause Where de la requ괥
+ 	 * @param array $akeys liste des clés primaires de la table (pour la clause Where) 
+ 	 * @param string $whereAdd clause Where de la requete
  	 * @return dbi_dataSet
  	 */
 	public function update($sentity, $aattributes, $akeys = array(), $whereAdd = null)
@@ -1052,9 +1082,9 @@ class dbi
 	}
 	
 	protected function toQueryString($str) {
-		if(substr($str, 0, 1) == "@")
+		if(preg_match("/@{(.*)}/i", $str, $matches) === 1)
 		{
-			return $this -> _odb -> escapeString(substr($str, 1));	
+			return $this -> _odb -> escapeString($matches[1]);	
 		}
 		return "'".$this -> _odb -> escapeString($str)."'";
 	}
@@ -1211,8 +1241,8 @@ class dbi
   
   /**
    * Effectue les traitements necessaires apres l'execution d'une requete :
-   * @param mixed $idquery idenfiant personnalis頤e la requ괥 (renvoy頰ar _startQuery())
-   * @param dbi_dataSet $ods r鳵ltat de la requ괥
+   * @param mixed $idquery identifiant personnalise la requet (renvové par _startQuery())
+   * @param dbi_dataSet $ods resultat de la requete
    */
   private function _endQuery($idquery, $ssql, $ods, $iwho = 1)
   {
