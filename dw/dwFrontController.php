@@ -9,6 +9,7 @@ use dw\classes\dwModel;
 use dw\processors\dwTextResponse;
 use dw\processors\dwJsonResponse;
 use dw\classes\dwException;
+use dw\classes\dwLogger;
 use dw\enums\HttpStatus;
 
 /**
@@ -17,6 +18,15 @@ use dw\enums\HttpStatus;
 class dwFrontController {
 	
 	private static $_hinstance;
+	
+	// Logger
+	private static function log() {
+		static $logger = null;
+		if(is_null($logger)) {
+			$logger = dwLogger::getLogger(__CLASS__);
+		}
+		return $logger;
+	}
 	
 	public static function &singleton() {
 		if(!isset(self::$_hinstance))
@@ -32,6 +42,10 @@ class dwFrontController {
 		$route = $request -> getRoute();
 		$response = new dwHttpResponse();
 		$model = new dwModel(array("properties" => dw::App() -> getProperties()));
+		
+		if(self::log() -> isTraceEnabled()) {
+			self::log() -> trace("Proceed request '".$request -> getRequestUri()."'");
+		}
 		
 		$response -> start();
 				
@@ -92,8 +106,10 @@ class dwFrontController {
 							if(!is_null($controllerMethod)) {
 								$resp = $controller -> $controllerMethod($request, $response, $model);
 							}
-	
-							if(is_string($resp)) {
+							
+							if(is_numeric($resp)) {
+								$response -> statusCode = $resp;
+							} elseif(is_string($resp)) {
 								
 								if(strpos($resp, 'redirect:') === 0) {
 									$url = substr($resp, 9);
@@ -115,7 +131,10 @@ class dwFrontController {
 								}
 								
 							} elseif(!$resp) {
-								$resp = new dwTextResponse("");	
+								$resp = new dwTextResponse("");
+								if(!$response -> statusCode) {
+									$response -> statusCode = HttpStatus::NO_CONTENT;
+								}
 							} elseif(is_array($resp)) {
 								if($response -> isJSONContent()) {
 									$resp = new dwJsonResponse($resp);
@@ -144,7 +163,7 @@ class dwFrontController {
 			$response -> statusCode = HttpStatus::INTERNAL_SERVER_ERROR;
 			dwErrorController::exceptionHandler($e);
 		}
-
+		
 		$response -> flush();
 		
 	}
