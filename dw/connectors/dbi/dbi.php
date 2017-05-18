@@ -109,11 +109,15 @@ class dbi_dataEntity extends dwObject
 		return $ods -> getNumRows() != 0;
 	}
 	
-	public function get($avalues = null, $bfetch = true)
+	/**
+	 * get()
+	 * Search only one result
+	 * @param unknown $avalues
+	 * @return unknown
+	 */
+	public function get($avalues = null)
 	{
-		$do = clone($this);
-		$do -> find($avalues);
-		return $do;
+		return $this -> select($avalues, 0, 1);
 	}
 	
 	public function count($avalues = null)
@@ -212,6 +216,10 @@ class dbi_dataEntity extends dwObject
 		} else {
 			throw new dwException(E_DBI_UNKNOW_ATTRIBUTE);
 		}
+	}
+	
+	public function has($attr) {
+		return ary::exists($this -> _aattributes, $attr);
 	}
 	
 	public function getTableName()
