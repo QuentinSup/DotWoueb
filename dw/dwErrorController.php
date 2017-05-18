@@ -111,27 +111,34 @@ class dwErrorController
 	public static function errorHandler($ierrno, $serrstr, $serrfile, $ierrline)
 	{
 
-		$ae = new dwError($ierrno, $serrstr, $serrfile, $ierrline);
-		
-		self::logger() -> error("Error $ierrno on file $serrfile at line $ierrline : $serrstr");
-		
-		self::addError($ae);
-
 		#si le caractere "@" de suppression d'affichage d'erreur est detecte, retourne null
         if (error_reporting() == 0) {
+        	self::logger() -> warn("Error $ierrno '$serrstr' on file $serrfile at line $ierrline");
             return null;
 		}
 		
+		self::logger() -> error("Error $ierrno '$serrstr' on file $serrfile at line $ierrline");
+		self::logger() -> error(self::getDebugBacktrace());
+		
 		if(dw::isDebug())
        	{
-			echo "<br />******<br />";
-        	dwError::raise($ae);
-			debug_print_backtrace();
-			echo "<br />******<br />";
-
+       		$ae = new dwError($ierrno, $serrstr, $serrfile, $ierrline);
+       		self::addError($ae);
         }
 		
 	}
+	
+	public static function getDebugBacktrace() { 
+		$trace = "";
+       	$backTraces = debug_backtrace();
+       	foreach($backTraces as $backTrace) {
+       		if(isset($backTrace['file'])) {
+    			$trace .= "# ".$backTrace['file'].", ".$backTrace['line']. " : ";
+       		}
+    		$trace .= @$backTrace['class'].@$backTrace['type'].@$backTrace['function']."\n";
+		}
+        return $trace; 
+    } 
 	
 	/**
 	 * Appelle quand une exception n'est pas capturee. Affiche un message a l'utilisateur suivant le mode actif de l'application (DEBUG ou RELEASE) et inscrit l'erreur dans le loggeur par defaut.
@@ -139,16 +146,8 @@ class dwErrorController
 	 */
 	public static function exceptionHandler($exception)
 	{
-		self::logger() -> fatal(dwException::toArray($exception));
-		
-		if(dw::isDebug())
-       	{
-			echo "<br />******<br />";
-        	dwException::raise($exception);
-			debug_print_backtrace();
-			echo "<br />******<br />";
-
-		}
+		self::logger() -> fatal("Exception '".$exception -> getMessage()."' from file ".$exception -> getFile()." at line ".$exception -> getLine());
+		self::logger() -> fatal("\n".$exception -> getTraceAsString());
 	}
 	
 	/**
@@ -159,7 +158,8 @@ class dwErrorController
 	{
 		$error = error_get_last();
 		if($error) {
-			self::logger() -> fatal($error['message']." from file ".$error['file']." at line ".$error['line']);
+			self::logger() -> fatal("Fatal error '".$error['message']."' from file ".$error['file']." at line ".$error['line']);
+			self::logger() -> fatal(self::getDebugBacktrace());
 		}
 	}
 	
