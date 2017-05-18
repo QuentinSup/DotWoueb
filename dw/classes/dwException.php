@@ -22,7 +22,6 @@ namespace dw\classes;
 	{
 		parent::__construct($smsg, null, $e);
 		$this -> _susermessage = $susermsg;
-		dwException::raise($this);
 	}
 
 	/**
