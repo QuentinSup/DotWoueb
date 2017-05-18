@@ -108,7 +108,7 @@ class session
 	 * autostart session if needed
 	 * @param string $sname attribute name
 	 */
-	public static function kill($sname)
+	public static function remove($sname)
 	{
 		if(!session::isActive()) {
 			session::start();
@@ -122,17 +122,22 @@ class session
 	 * autostart session if needed
 	 * @param array $aexceptlist a set of exception
 	 */
-	public static function killAll($aexceptlist = array())
+	public static function clear($aexceptlist = null)
 	{
 		if(!session::isActive()) {
 			session::start();
+		}
+		
+		if($aexceptlist === null) {
+			session_unset();
+			return;
 		}
 		
 		foreach(array_keys($_SESSION) as $session)
 		{
 			if(!in_array($session, $aexceptlist))
 			{
-				self::kill($session);	
+				self::remove($session);	
 			}	
 		}
 	}
@@ -142,12 +147,12 @@ class session
 	 * autostart session if needed
 	 * @param string $sname the attribute name
 	 */
-	public static function exist($sname)
+	public static function exists($sname)
 	{
 		if(!session::isActive()) {
 			session::start();
 		}
-		
+
 		return isset($_SESSION[$sname]);
 	}
 
@@ -158,7 +163,14 @@ class session
 	{
 		session_destroy();
 	}
-
+	
+	/**
+	 * Regenerate session id
+	 */
+	public static function regenerateId() {
+		session_regenerate_id(true);
+	}
+	
 }
 
 ?>

@@ -46,6 +46,10 @@ class Autowire extends Annotation {
 					$connectorName = $annotationProperty -> getName();
 					eval("$className::\$$propName =  dw\dwFramework::App ()->getConnector ( '$connectorName' );");
 				}
+				
+				if($annotationProperty -> getValue() == 'session') {
+					eval("$className::\$$propName =  new dw\classes\dwSession();");
+				}
 
 			}
 				
