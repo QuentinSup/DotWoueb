@@ -4,7 +4,6 @@ namespace dw;
 
 use dw\classes\dwError;
 use dw\classes\dwLogger;
-use dw\classes\dwException;
 use dw\dwFramework as dw;
 
 /**
@@ -146,8 +145,8 @@ class dwErrorController
 	 */
 	public static function exceptionHandler($exception)
 	{
-		self::logger() -> fatal("Exception '".$exception -> getMessage()."' from file ".$exception -> getFile()." at line ".$exception -> getLine());
-		self::logger() -> fatal("\n".$exception -> getTraceAsString());
+		self::logger() -> error("Exception '".$exception -> getMessage()."' from file ".$exception -> getFile()." at line ".$exception -> getLine());
+		self::logger() -> error("\n".$exception -> getTraceAsString());
 	}
 	
 	/**
@@ -160,7 +159,9 @@ class dwErrorController
 		if($error) {
 			self::logger() -> fatal("Fatal error '".$error['message']."' from file ".$error['file']." at line ".$error['line']);
 			self::logger() -> fatal(self::getDebugBacktrace());
+			http_response_code(500);
 		}
+
 	}
 	
 	/**
