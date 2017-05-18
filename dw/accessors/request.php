@@ -112,12 +112,16 @@ class requestFile
 		return filesize($this -> tmp_name);	
 	}
 	
+	public function getName() {
+		return $this -> name;		
+	}
+	
 	public static function &factory($fromname)
 	{
 		$requestFile = new requestFile();
-		if(isset($_FILES[$fromname]))
-		{
-			$requestFile -> fromArray($_FILES[$fromname]);
+		$file = ary::get($_FILES, $fromname);
+		if($file) {
+			$requestFile -> fromArray($file);
 		}
 		return $requestFile;
 	}
@@ -132,7 +136,7 @@ class requestFile
 		return count($_FILES);
 	}
 	
-	public function save($sdir, $sname = null)
+	public function save($sdir = ".", $sname = null)
 	{
 		return move_uploaded_file($this -> tmp_name, $sdir."/".(is_null($sname)?$this -> name:$sname));
 	}
