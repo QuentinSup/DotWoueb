@@ -52,6 +52,10 @@ class dwHttpRequest {
 		return $this -> _method;
 	}
 	
+	/**
+	 * Return the requested uri
+	 * @return unknown
+	 */
 	public function getRequestUri() {
 		return $this -> _requestUri;	
 	}
@@ -168,6 +172,13 @@ class dwHttpRequest {
 		return $this -> getHeader($varName, $defaultValue);
 	}
 	
+	public function getUploadedFile($name) {
+		return request::getRequestFile($name);
+	}
+	
+	public function File($name) {
+		return $this -> getUploadedFile($name);
+	}
 }
 
 ?>
