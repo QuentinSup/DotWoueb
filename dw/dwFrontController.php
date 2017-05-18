@@ -106,9 +106,10 @@ class dwFrontController {
 							if(!is_null($controllerMethod)) {
 								$resp = $controller -> $controllerMethod($request, $response, $model);
 							}
-							
+
 							if(is_numeric($resp)) {
 								$response -> statusCode = $resp;
+								$resp = new dwTextResponse("");
 							} elseif(is_string($resp)) {
 								
 								if(strpos($resp, 'redirect:') === 0) {
