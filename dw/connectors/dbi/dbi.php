@@ -120,6 +120,21 @@ class dbi_dataEntity extends dwObject
 		return $this -> select($avalues, 0, 1);
 	}
 	
+
+	/**
+	 * getAll()
+	 * Search only one result
+	 * @param unknown $avalues
+	 * @return unknown
+	 */
+	public function getAll($orderBy = null, $ioffset = null, $ilimit = null, $whereAdd = null)
+	{
+		if($this -> plist($orderBy, $ioffset, $ilimit, $whereAdd)) {
+			return $this -> fetchAll();
+		}
+		return array();
+	}
+	
 	public function count($avalues = null)
 	{
 		$this -> setFrom($avalues);	
