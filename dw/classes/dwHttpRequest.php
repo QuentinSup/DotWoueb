@@ -55,9 +55,19 @@ class dwHttpRequest {
 	/**
 	 * Return the requested uri
 	 * @return unknown
+	 * @deprecated
+	 * @see getUri()
 	 */
 	public function getRequestUri() {
 		return $this -> _requestUri;	
+	}
+	
+	/**
+	 * Return the requested uri
+	 * @return unknown
+	 */
+	public function getUri() {
+		return $this -> _requestUri;
 	}
 	
 	public function getContentType() {
