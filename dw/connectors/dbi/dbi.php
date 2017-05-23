@@ -110,20 +110,36 @@ class dbi_dataEntity extends dwObject
 	}
 	
 	/**
+	 * Export data onto object class
+	 * @return \dw\classes\dwObject
+	 */
+	public function export() {
+		return new dwObject($this -> toArray());
+	}
+	
+	/**
 	 * get()
 	 * Search only one result
-	 * @param unknown $avalues
+	 * @param unknown $avalues. If set, existing values will be cleared. If not set, existing values will be used
 	 * @return unknown
 	 */
-	public function get($avalues = null)
+	public function get($avalues = null, $bclearValues = true)
 	{
-		return $this -> select($avalues, 0, 1);
+		if(!is_null($avalues) && count($avalues) > 0 && $bclearValues) {
+			$this -> clearValues(true);
+		}
+		
+		if($this -> select($avalues, 0, 1)) {
+			return $this -> export();
+		}
+		
+		return null;
 	}
 	
 
 	/**
 	 * getAll()
-	 * Search only one result
+	 * Search and fetch all results
 	 * @param unknown $avalues
 	 * @return unknown
 	 */
@@ -169,12 +185,13 @@ class dbi_dataEntity extends dwObject
 		{
 			$this -> fetch();
 		}
-		return $this -> _odataSet -> getNumRows() > 0;
+		return $this -> _odataSet -> getNumRows();
 	}
 	
 	/**
 	 * plist()
 	 * Alternative to find()
+	 * Do not autofetch result
 	 */
 	public function plist($orderBy = null, $ioffset = null, $ilimit = null, $whereAdd = null)
 	{
