@@ -114,6 +114,10 @@ class dwFrontController {
 								
 								if(strpos($resp, 'redirect:') === 0) {
 									$url = substr($resp, 9);
+									if($url[0] == '/') {
+										$url = $request -> getBaseUri($url);
+									}
+									
 									header("Location: $url");
 									die;
 								}
