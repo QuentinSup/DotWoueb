@@ -135,8 +135,17 @@ class dwHttpRequest {
 		return server::get('SERVER_PORT');
 	}
 	
-	public function getBaseUri() {
-		return $this -> getScheme().'://'.$this -> getHost().$this -> getContext()."/";
+	public function getBaseUri($uri = "/") {
+		$url = $this -> getScheme().'://'.$this -> getHost().$this -> getContext();
+		
+		if($uri && $uri[0] != "/") {
+			$uri = "/".$uri;
+			
+		}
+		
+		$url .= $uri;
+		
+		return $url;
 	}
 	
 	public function getClientIP() {
