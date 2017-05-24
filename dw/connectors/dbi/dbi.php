@@ -108,15 +108,7 @@ class dbi_dataEntity extends dwObject
 		$ods = $this -> _odb -> select($this -> getTableName(), $akeys);
 		return $ods -> getNumRows() != 0;
 	}
-	
-	/**
-	 * Export data onto object class
-	 * @return \dw\classes\dwObject
-	 */
-	public function export() {
-		return new dwObject($this -> toArray());
-	}
-	
+		
 	/**
 	 * get()
 	 * Search only one result
@@ -291,7 +283,7 @@ class dbi_dataEntity extends dwObject
 	{
 		if($bnotnull)
 		{
-			return $this -> _getArrayNotNullValues(array_keys($this -> _aattributes), $bnotnull);
+			return $this -> _getArrayNotNullValues(array_keys($this -> _aattributes));
 		} else {
 			return $this -> _aattributes;
 		}
@@ -301,7 +293,7 @@ class dbi_dataEntity extends dwObject
 	{
 		if($bnotnull)
 		{
-			return $this -> _getArrayNotNullValues($this -> _aprimaryKey, $bnotnull);
+			return $this -> _getArrayNotNullValues($this -> _aprimaryKey);
 		} else {
 			return $this -> _aprimaryKey;	
 		}
