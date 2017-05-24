@@ -18,6 +18,11 @@ class dwHttpResponse {
 		return $logger;
 	}
 	
+	public function status($code) {
+		$this -> statusCode = $code;
+		http_response_code($code);
+	}
+	
 	public function isHeadersSent() {
 		return headers_sent();
 	}
@@ -33,7 +38,7 @@ class dwHttpResponse {
 	}
 	
 	public function sendHeaders() {
-		http_response_code($this -> statusCode);
+		$this -> status($this -> statusCode);
 		if($this -> isHeadersSent()) {
 
 			if(self::log() -> isWarnEnabled()) {
