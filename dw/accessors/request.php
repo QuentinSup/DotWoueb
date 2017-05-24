@@ -22,7 +22,8 @@ class request
 	
 	public static function get($name, $defaultvalue = null, $formatRequestFunction = 'trim')
 	{
-		return urldecode(ary::get($_REQUEST, $name, $defaultvalue, $formatRequestFunction));
+		$value = ary::get($_REQUEST, $name, $defaultvalue, $formatRequestFunction);
+		return is_string($value)?urldecode($value):$value;
 	}
 	
 	public static function set($name, $mvalue)
