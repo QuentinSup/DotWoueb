@@ -169,6 +169,10 @@ class dwErrorController
 	 */
 	public static function setHandlers()
 	{
+		ini_set('display_errors', false); #in order to hide errors shown to user by php
+		ini_set('log_errors', false); #assuming we log the errors our selves 
+		ini_set('error_reporting', E_ALL); #We like to report all errors
+		
         set_error_handler(array('dw\dwErrorController', 'errorHandler'));
 		set_exception_handler(array('dw\dwErrorController', 'exceptionHandler'));
 		register_shutdown_function(array('dw\dwErrorController', 'fatalHandler'));
