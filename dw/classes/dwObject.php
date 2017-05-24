@@ -66,6 +66,27 @@ class dwObject {
 		}
 		return $ary; 
 	}
+	
+	public function export($names = null) {
+		
+		if(is_string($names)) {
+			$names = explode(' ', $names);
+		}
+		
+		$attributes = $this -> getAttributes();
+		$ary = $names == null?array_keys($attributes):$names;
+		$ret = new dwObject();
+		foreach($ary as $var)
+		{	
+			$var = trim($var);
+			if($var && isset($attributes[$var])) {
+				$ret -> $var = $this -> $var;
+			}
+		
+		}
+		return $ret;
+		
+	}
 		
 	public function getAttributes()
 	{
