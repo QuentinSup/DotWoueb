@@ -89,7 +89,11 @@ class ary
 	 */
 	public static function exists($ary, $sname)
 	{
-		return self::is_set($ary, $sname);
+		if(is_assoc($ary)) {
+
+			return self::is_set($ary, $sname);
+		}
+		return in_array($sname, $ary, false);
 	}
 	
 }
