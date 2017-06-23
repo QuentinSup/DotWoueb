@@ -112,7 +112,7 @@ class dbi_dataEntity extends dwObject
 	/**
 	 * get()
 	 * Search only one result
-	 * @param unknown $avalues. If set, existing values will be cleared. If not set, existing values will be used
+	 * @param unknow $avalues. If set, existing values will be cleared. If not set, existing values will be used
 	 * @return unknown
 	 */
 	public function get($avalues = null, $bclearValues = true)
@@ -360,7 +360,7 @@ class dbi_dataEntity extends dwObject
 		return $this -> _isfetched;
 	}
 	
-	public function fetchAll() {
+	public function fetchAll($mapFunction) {
 		$r = array();
 
 		if(!$this -> isFetched()) {
@@ -371,7 +371,13 @@ class dbi_dataEntity extends dwObject
 		
 		if($b) {
 			do {
-				$r[] = $this -> toArray();
+				$data = $this -> toArray();
+				if(is_callable($mapFunction)) {
+					$data = $mapFunction($data);
+				}
+				if($data) {
+					$r[] = $data;
+				}
 			} while($this -> fetch());
 		}
 		
