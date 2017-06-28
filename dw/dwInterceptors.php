@@ -93,7 +93,7 @@ class dwInterceptors {
 			include_once($path.$sname.'.php');
 			
 			// try to find the className into file
-			$class = dw::App() -> getNamespace().$sname.self::$suffixClassName;
+			$class = dw::App() -> getNamespace()."\\".$sname.self::$suffixClassName;
 			
 			if(!class_exists($class))
 			{

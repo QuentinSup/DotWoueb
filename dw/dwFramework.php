@@ -161,6 +161,10 @@ class dwFramework
 	{
 		self::$_application = new dwApplication($namespace);
 		self::$_application -> loadConfig(APP_WEBINF_DIR);
+		
+		// update autoloader
+		self::autoload(self::$_application -> getNamespace(), APP_DIR);
+		
 		return self::$_application;
 	}
 	
@@ -328,6 +332,20 @@ class dwFramework
 			}
 		}
 		return $loaded;
+	}
+	
+	/**
+	 * Return the autoloader global instance
+	 */
+	public static function autoloader() {
+		return self::$_autoLoader;
+	}
+	
+	/**
+	 * Add autoload new namespace path
+	 */
+	public static function autoload($ns, $path) {
+		self::$_autoLoader -> addNamespaceRoute($ns, $path);
 	}
 		
 }

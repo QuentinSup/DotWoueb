@@ -44,6 +44,7 @@ class dwAutoLoader {
 	 * @param $path The path
 	 */
 	public function addNamespaceRoute($ns, $path) {
+		
 		$this -> _namespacesMapping[] = array("ns" => $ns, "path" => $path);
 		// Sort list
 		usort($this -> _namespacesMapping, array($this, "__compareNamespaceRoute"));
@@ -64,6 +65,12 @@ class dwAutoLoader {
 	protected function loader($className) {
 				
 		foreach($this -> _namespacesMapping as $route) {
+			/*
+			if(self::logger() -> isTraceEnabled()) {
+				self::logger() -> trace("Look for '$className' with namespace route '".$route['ns']."'");
+			}
+			*/
+			
 			if(strpos($className, $route['ns']."\\") === 0) {
 				$classPath = str_ireplace("\\", "/", substr($className, strlen($route['ns'])));
 				$classPath .= stripos($classPath, ".php") == strlen($classPath) - strlen(".php")?"":".php";

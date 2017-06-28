@@ -46,6 +46,7 @@ class dwApplication extends dwXMLConfig
 	public function __construct($namespace = "") {
 		$this -> _namespace = $namespace;
 		$this -> _routemap = new dwRouteMap();
+		
 		//$this -> logger = \Logger::getLogger("main");
 	}
 	
@@ -83,7 +84,7 @@ class dwApplication extends dwXMLConfig
 	 * Return the namespace specified for the app
 	 */
 	public function getNamespace() {
-		return $this -> _namespace."\\";
+		return $this -> _namespace;
 	}
 	
 	/**
