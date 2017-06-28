@@ -360,7 +360,7 @@ class dbi_dataEntity extends dwObject
 		return $this -> _isfetched;
 	}
 	
-	public function fetchAll($mapFunction) {
+	public function fetchAll($mapFunction = null) {
 		$r = array();
 
 		if(!$this -> isFetched()) {
