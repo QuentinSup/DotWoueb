@@ -84,6 +84,14 @@ class dwSession {
 		}
 		return session::set($name,$value);
 	}
+	
+	public function __invoke() {
+		$this -> __debugInfo(); 
+	}
+	
+	public function __debugInfo() {
+		print_r($_SESSION);
+	}
 
 }
 
