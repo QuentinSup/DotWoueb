@@ -15,6 +15,12 @@ class dwHttpRequest {
 	protected $_pathVars = array();
 	protected $_headers = array();
 	
+	/**
+	 * constructor
+	 * @param unknown $uri
+	 * @param unknown $method
+	 * @param unknown $contentType
+	 */
 	public function __construct($uri = null, $method = null, $contentType = null) {
 
 		if(is_null($uri)) {
@@ -68,6 +74,22 @@ class dwHttpRequest {
 	 */
 	public function getUri() {
 		return $this -> _requestUri;
+	}
+	
+	/**
+	 * Return the query string
+	 * @return unknown
+	 */
+	public function getQuery() {
+		return server::get('QUERY_STRING');
+	}
+	
+	public function getOrigin() {
+		return $this -> getRoot().server::get('REQUEST_URI');
+	}
+	
+	public function getReferer() {
+		return server::get('HTTP_REFERER');
 	}
 	
 	public function getContentType() {
@@ -135,8 +157,12 @@ class dwHttpRequest {
 		return server::get('SERVER_PORT');
 	}
 	
+	public function getRoot() {
+		return $this -> getScheme().'://'.$this -> getHost();
+	}
+	
 	public function getBaseUri($uri = "/") {
-		$url = $this -> getScheme().'://'.$this -> getHost().$this -> getContext();
+		$url = $this -> getRoot().$this -> getContext();
 		
 		if($uri && $uri[0] != "/") {
 			$uri = "/".$uri;
