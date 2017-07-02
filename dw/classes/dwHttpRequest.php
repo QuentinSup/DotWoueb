@@ -14,6 +14,7 @@ class dwHttpRequest {
 	protected $_route = null;
 	protected $_pathVars = array();
 	protected $_headers = array();
+	protected $_context = null;
 	
 	/**
 	 * constructor
@@ -23,11 +24,15 @@ class dwHttpRequest {
 	 */
 	public function __construct($uri = null, $method = null, $contentType = null) {
 
+		$context = server::get('CONTEXT_PREFIX');
+		if($context == "/system-bin/") {
+			$context = "";
+		}
+
 		if(is_null($uri)) {
 			// build $uri
-			$prefix = server::get('CONTEXT_PREFIX');
 			$uri = explode('?', server::get('REQUEST_URI'))[0];
-			$uri = substr($uri, strlen($prefix));
+			$uri = substr($uri, strlen($context));
 		}
 
 		$uri = dwRoute::smoothuri(urldecode($uri));
@@ -39,6 +44,7 @@ class dwHttpRequest {
 			$contentType = server::get('CONTENT_TYPE');	
 		}
 		
+		$this -> _context = $context;
 		$this -> _requestUri 	= $uri;
 		$this -> _method 		= $method;
 		$this -> _contentType 	= $contentType;
@@ -146,7 +152,7 @@ class dwHttpRequest {
 	}
 	
 	public function getContext() {
-		return server::get('CONTEXT_PREFIX');
+		return $this -> _context;
 	}
 	
 	public function getProtocol() {
