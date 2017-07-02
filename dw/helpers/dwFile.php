@@ -16,6 +16,17 @@ class dwFile {
 	    $file = strtok($file, ".");
 	    return $file;
 	}
+	
+	/**
+	 * getExtension()
+	 * Retourne l'extension du fichier
+	 * @return string
+	 * @param string $sfilename Chemin ou nom de fichier
+	 */
+	public static function getExtension($sfilename)
+	{
+		return pathinfo($sfilename, PATHINFO_EXTENSION);
+	}
 
 	/**
 	 * Retourne si le fichier existe
