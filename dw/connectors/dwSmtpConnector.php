@@ -3,6 +3,7 @@
 namespace dw\connectors;
 
 use dw\classes\dwConnectorInterface;
+use dw\classes\dwLogger;
 
 dw_require('vendors/PHPMailer/class.phpmailer');
 
@@ -12,10 +13,20 @@ dw_require('vendors/PHPMailer/class.phpmailer');
  *
  */
 class dwSmtpConnector implements dwConnectorInterface {
-
+	
 	protected $_from = null;
 	protected $_smtp = null;
 	protected $_port = null;
+
+	
+	// Logger
+	private static function log() {
+		static $logger = null;
+		if(is_null($logger)) {
+			$logger = dwLogger::getLogger(__CLASS__);
+		}
+		return $logger;
+	}
 	
 	public static function getName() {
 		return "smtp";
@@ -85,6 +96,11 @@ class dwSmtpConnector implements dwConnectorInterface {
 		ini_set("smtp_port", $this -> _port);
 
 		$mail = new \PHPMailer();
+		
+		$mail->SMTPDebug = 2;
+		$mail->Debugoutput = function($str, $level) {
+			self::log() -> debug($str);
+		};
 		
 		$mail->Host = $this -> _smtp;  							// Specify main and backup SMTP servers
 		$mail->Port = $this -> _port;                              // TCP port to connect to
