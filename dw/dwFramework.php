@@ -23,7 +23,7 @@ use dw\accessors\ary;
 use dw\classes\dwCacheFile;
 use dw\helpers\dwNumeric;
 use dw\adapters\template\dwSmartyTemplate;
-use dw\classes\i18n\dwI18nXMLAdapter;
+use dw\classes\i18n\dwI18nXmlAdapter;
 
 /**
  * Classe principale du framework (toutes les fonctions sont statiques)
