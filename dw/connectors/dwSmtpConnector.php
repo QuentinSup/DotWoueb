@@ -121,23 +121,14 @@ class dwSmtpConnector implements dwConnectorInterface {
 		$mail->Subject = $subject;
 		$mail->Body    = $text;
 		//$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-		
 
-		/*
-		// Always set content-type when sending HTML email
-		$headers = "MIME-Version: 1.0"."\n";
-		$headers .= "Content-Type: text/html; charset=\"UTF-8\""."\n";
-		$headers .= 'From: '.$this -> _from."\n";
-		if(isset($cc)) {
-			$headers .= 'Cc: '.$this -> fMailField($cc)."\n";	
+		if(self::log() -> isDebugEnabled()) {
+			self::log() -> debug("Send mail (to: ".$this -> fMailField($to).", from: ".$this -> _from.", subject: ".$subject.")");
 		}
-		if(isset($bcc)) {
-			$headers .= 'Bcc: '.$this -> fMailField($bcc)."\n";
-		}
-		*/
 		
-		//return mail($this -> fMailField($to), "=?UTF-8?B?".base64_encode($subject)."?=", $text, $headers);
-		//return mail(null, "=?UTF-8?B?".base64_encode($subject)."?=", null, $headers);
+		if(self::log() -> isTraceEnabled()) {
+			self::log() -> trace("Body: $text");
+		}
 		
 		return $mail -> send();
 		
