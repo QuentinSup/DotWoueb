@@ -96,7 +96,7 @@ class dwString
 	 * return formatted string
 	 */
 	public static function f2link($str) {
-		$link = preg_replace("/[^a-zA-Z 0-9]+/", "", strtolower($str));
+		$link = preg_replace("/[^a-zA-Z 0-9\-]+/", "", strtolower($str));
 		$link = htmlentities(str_replace(" ", "-", $link));
 		return $link;
 	}
