@@ -320,15 +320,16 @@ class dwFramework
 	 * Try to include all files from a directory
 	 * $dir The directory to scan
 	 */
-	public static function includeOnceDirectory($dir) {
+	public static function includeOnceDirectory($dir, $ext = "php") {
 		$list = dwFile::ls($dir);
 		$loaded = array();
 		foreach($list as $file) {
 	
 			if(!is_dir($file)) {
-				$loaded[] = $file;
-				include_once($file);
-					
+				if(!$ext || ($ext == dwFile::getExtension($file))) {
+					$loaded[] = $file;
+					include_once($file);
+				}
 			}
 		}
 		return $loaded;
