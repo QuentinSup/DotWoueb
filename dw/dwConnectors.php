@@ -24,18 +24,36 @@ class dwConnectors {
 		foreach($connectorsList as $connectorPath) {
 
 			if(!is_dir($connectorPath)) {
-			
 				include_once($connectorPath);
-
 				$connectorClassName = "dw\\connectors\\".dwFile::getAbsoluteName($connectorPath);
-				$connectorName = $connectorClassName::getName();
-
-				self::$_connectors[$connectorName] = $connectorClassName;
+				self::registerConnector($connectorClassName);
 			}
 			
 		}
 
 	}
+	
+	/**
+	 * Load a connector file
+	 * @param $file the connector file
+	 */
+	public static function loadConnector($file) {
+		include_once($file);
+		$connectorClassName = "dw\\connectors\\".dwFile::getAbsoluteName($file);
+		self::registerConnector($connectorClassName);
+	}
+	
+	/**
+	 * Register a connector class
+	 * @param unknown $connectorClassName
+	 */
+	public static function registerConnector($connectorClassName) {
+		if(!is_subclass_of($connectorClassName, 'dw\classes\dwConnectorInterface')) {
+			throw new Exception("The connector $connectorClassName must inherits 'dwConnectorInterface' interface.");	
+		}
+		self::$_connectors[$connectorClassName::getName()] = $connectorClassName;
+	}
+	
 	/**
 	 * Return a new instance of a connector
 	 * @param $name the connector name to build

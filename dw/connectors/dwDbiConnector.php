@@ -22,7 +22,7 @@ class dwDbiConnector implements dwConnectorInterface {
 	
 	public function prepare() {
 		/* Si le paramètre de connexion automatique (autoconnect) est défini
-		 * Se connecte ࠬa base de donnée
+		 * Se connecte à la base de données
 		 */
 		$this -> _db = new dbi();
 		if($this -> getAutoConnect())

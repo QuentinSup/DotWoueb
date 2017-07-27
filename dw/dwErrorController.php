@@ -5,6 +5,7 @@ namespace dw;
 use dw\classes\dwError;
 use dw\classes\dwLogger;
 use dw\dwFramework as dw;
+use dw\accessors\ary;
 
 /**
  * Intercepte les erreurs et les exceptions non capturees
@@ -99,6 +100,45 @@ class dwErrorController
 		trigger_error($smsg, 1024);	
 	}
 	
+	
+	public static function getErrorLib($level)
+	{
+		switch($level)
+		{
+			case E_ERROR: // 1 //
+				return 'E_ERROR';
+			case E_WARNING: // 2 //
+				return 'E_WARNING';
+			case E_PARSE: // 4 //
+				return 'E_PARSE';
+			case E_NOTICE: // 8 //
+				return 'E_NOTICE';
+			case E_CORE_ERROR: // 16 //
+				return 'E_CORE_ERROR';
+			case E_CORE_WARNING: // 32 //
+				return 'E_CORE_WARNING';
+			case E_COMPILE_ERROR: // 64 //
+				return 'E_COMPILE_ERROR';
+			case E_COMPILE_WARNING: // 128 //
+				return 'E_COMPILE_WARNING';
+			case E_USER_ERROR: // 256 //
+				return 'E_USER_ERROR';
+			case E_USER_WARNING: // 512 //
+				return 'E_USER_WARNING';
+			case E_USER_NOTICE: // 1024 //
+				return 'E_USER_NOTICE';
+			case E_STRICT: // 2048 //
+				return 'E_STRICT';
+			case E_RECOVERABLE_ERROR: // 4096 //
+				return 'E_RECOVERABLE_ERROR';
+			case E_DEPRECATED: // 8192 //
+				return 'E_DEPRECATED';
+			case E_USER_DEPRECATED: // 16384 //
+				return 'E_USER_DEPRECATED';
+		}
+		return "ERROR";
+	}
+	
 	/**
 	 * Appele automatiquement lorsqu'une erreur se produit. Affiche un message a l'utilisateur suivant le mode actif de l'application (DEBUG ou RELEASE) et inscrit l'erreur dans le loggeur par defaut.
 	 * @param int $ierrno numero de l'erreur
@@ -112,11 +152,13 @@ class dwErrorController
 
 		#si le caractere "@" de suppression d'affichage d'erreur est detecte, retourne null
         if (error_reporting() == 0) {
-        	self::logger() -> warn("Error $ierrno '$serrstr' on file $serrfile at line $ierrline");
+        	self::logger() -> debug("Error $ierrno '$serrstr' on file $serrfile at line $ierrline");
             return null;
 		}
+
+		$lib = self::getErrorLib($ierrno);
 		
-		self::logger() -> error("Error $ierrno '$serrstr' on file $serrfile at line $ierrline");
+		self::logger() -> error("$lib($ierrno) '$serrstr' on file $serrfile at line $ierrline");
 		self::logger() -> error(self::getDebugBacktrace());
 		
 		if(dw::isDebug())
@@ -134,8 +176,8 @@ class dwErrorController
        		if(isset($backTrace['file'])) {
     			$trace .= "# ".$backTrace['file'].", ".$backTrace['line']. " : ";
        		}
-    		$trace .= @$backTrace['class'].@$backTrace['type'].@$backTrace['function']."\n";
-		}
+    		$trace .= ary::get($backTrace, 'class', '').ary::get($backTrace, 'type', '').@$backTrace['function']."\n";
+       	}
         return $trace; 
     } 
 	

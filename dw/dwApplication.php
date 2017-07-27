@@ -283,7 +283,7 @@ class dwApplication extends dwXMLConfig
 	 * 
 	 */
 	public function prepare() {
-		
+				
 		if(self::logger() -> isInfoEnabled()) {
 			self::logger() -> info("Initialize app");
 		}
@@ -295,17 +295,29 @@ class dwApplication extends dwXMLConfig
 		}
 		
 		foreach($this -> _connectors as $connector) {
+			if(self::logger() -> isDebugEnabled()) {
+				self::logger() -> debug("Prepare connector '".$connector -> getName()."'");
+			}
 			$connector -> prepare();
 		}
 
-		$this -> loadControllers();
+		// Initialize controllers and mapping
+		
+		if(self::logger() -> isInfoEnabled()) {
+			self::logger() -> info("Initialize controllers");
+		}
+		
+		// Load from app directory
+		dw::includeOnceDirectory(APP_CONTROLLERS_DIR);
+		
+		$this -> _prepare();
 		
 	}
 		
 	/**
 	 * Take a look into declared classes to identify Controllers and set mapping
 	 */
-	public function loadControllers() {
+	public function _prepare() {
 
 		// Initialize controllers and mapping
 		
@@ -348,7 +360,7 @@ class dwApplication extends dwXMLConfig
 			}
 			
 			// Listener
-			if(is_subclass_of($class, 'dw\classes\dwListenerInterface')) {
+			if(is_subclass_of($class, 'dw\classes\dwInterceptorInterface')) {
 
 				// Process annotations
 				dwAnnotations::process($this, $class);
