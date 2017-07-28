@@ -102,9 +102,16 @@ class dwRoute {
 			}
 		}
 		
+		$vars = array();
+		
 		// Check static uri
-		if(!self::isUriMatch($routeUri, $uri, $pathVars)) {
+		if(!self::isUriMatch($routeUri, $uri, $vars)) {
 			return false;
+		}
+		
+		// Copie values
+		foreach($vars as $key => $value) {
+			$pathVars[$key] = $value;
 		}
 
 		return true;
