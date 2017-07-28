@@ -67,7 +67,7 @@ class dwRoute {
 
 		$nbvars = mb_substr_count($this -> _uri, ":");
 		$nbopts = mb_substr_count($this -> _uri, "?");
-		$weight = mb_substr_count($this -> _uri, "/") * 10 - $nbvars - $nbopts;
+		$weight = $this -> _deep * 10 - $nbvars - $nbopts;
 
 		if(!$this -> _routeFn) {
 			$weight--;

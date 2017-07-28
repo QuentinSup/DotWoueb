@@ -4,7 +4,7 @@ namespace dw\classes;
 
 use dw\classes\dwRoute;
 
-class dwRouteMap  {
+class dwRouteMap {
 	
 	protected $_routes = array();
 	
@@ -28,7 +28,13 @@ class dwRouteMap  {
 
 		$this -> _routes[] = $route;
 		usort($this -> _routes, array($this, "__compareRoutes"));
+		
+		return $route;
 
+	}
+	
+	public function getRoutes() {
+		return $this -> _routes;
 	}
 	
 	protected function __compareRoutes($route1, $route2) {
