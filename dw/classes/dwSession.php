@@ -10,8 +10,10 @@ class dwSession {
 	 * Constructor
 	 * Initialize session
 	 */
-	public function __construct() {
-		session::start();
+	public function __construct($autostart = true) {
+		if($autostart) {
+			session::start();
+		}
 	}
 	
 	/**
@@ -45,13 +47,20 @@ class dwSession {
 		$this -> clear();
 		session::regenerateId();
 	}
+	
+	/**
+	 * Commit session
+	 */
+	public function save() {
+		session::commit();
+	}
 
 	/**
 	 * Explicit get function
 	 * @param string $name
 	 * @param mixed $defaultValue
 	 */
-	public function get($name, $defaultValue) {
+	public function get($name, $defaultValue = null) {
 		return session::get($name, $defaultValue);
 	}
 	
@@ -61,6 +70,9 @@ class dwSession {
 	 * @param mixed $value
 	 */
 	public function set($name, $value) {
+		if($value === null) {
+			return session::remove($name);
+		}
 		session::set($name, $value);
 	}
 	
@@ -75,14 +87,11 @@ class dwSession {
 	
 	
 	public function __get($name) {
-		return session::get($name);
+		return $this -> get($name);
 	}
 	
 	public function __set($name, $value) {
-		if($value === null) {
-			return session::remove($name);
-		}
-		return session::set($name,$value);
+		return $this -> set($name,$value);
 	}
 	
 	public function __invoke() {
