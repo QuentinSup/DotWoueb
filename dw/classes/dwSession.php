@@ -10,7 +10,7 @@ class dwSession {
 	 * Constructor
 	 * Initialize session
 	 */
-	public function __construct($autostart = true) {
+	public function __construct($autostart = false) {
 		if($autostart) {
 			session::start();
 		}

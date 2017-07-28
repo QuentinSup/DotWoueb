@@ -57,6 +57,9 @@ class session
 	 */
 	public static function getSessionId()
 	{
+		if(!self::isActive()) {
+			session::start();
+		}
 		return session_id();
 	}	
 	
