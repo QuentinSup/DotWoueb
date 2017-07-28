@@ -300,6 +300,19 @@ class dwApplication extends dwXMLConfig
 			}
 			$connector -> prepare();
 		}
+		
+		// Initialize security adapters
+		
+		if(self::logger() -> isInfoEnabled()) {
+			self::logger() -> info("Initialize security adapters");
+		}
+		
+		foreach(dwSecurityController::getAdapters() as $adapter) {
+			if(self::logger() -> isDebugEnabled()) {
+				self::logger() -> debug("Prepare adapter");
+			}
+			$adapter -> prepare();
+		}
 
 		// Initialize controllers and mapping
 		
@@ -310,26 +323,19 @@ class dwApplication extends dwXMLConfig
 		// Load from app directory
 		dw::includeOnceDirectory(APP_CONTROLLERS_DIR);
 		
-		$this -> _prepare();
+		$this -> _inspect();
 		
 	}
 		
 	/**
 	 * Take a look into declared classes to identify Controllers and set mapping
 	 */
-	public function _prepare() {
+	public function _inspect() {
 
-		// Initialize controllers and mapping
-		
+		// Initialize mapping
+
 		if(self::logger() -> isInfoEnabled()) {
-			self::logger() -> info("Initialize controllers");
-		}
-		
-		// Load from app directory
-		dw::includeOnceDirectory(APP_CONTROLLERS_DIR);
-		
-		if(self::logger() -> isInfoEnabled()) {
-			self::logger() -> info("Load controllers from declared classes and set mapping");
+			self::logger() -> info("Inspect from declared classes and set mapping");
 		}
 		
 		$classes = get_declared_classes();

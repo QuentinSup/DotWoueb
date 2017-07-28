@@ -6,7 +6,7 @@ use dw\accessors\ary;
 
 /**
  * server
- * G貥 les valeurs $_SERVER
+ * Gere les valeurs $_SERVER
  * @author Quentin Supernant
  * @version 1.0
  * @package dotWoueb

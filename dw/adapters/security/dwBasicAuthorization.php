@@ -25,12 +25,16 @@ class dwBasicAuthorization implements dwSecurityAdapterInterface {
 		return $this -> _users -> get($name) == $passwd;
 	}
 	
-	public function prepare($config) {
+	public function digestConfig($config) {
 		if($config -> users && $config -> users -> user) {
 			foreach($config -> users -> user as $userConfig) {
 				$this -> addUserConfig($userConfig);
 			}
 		}
+	}
+	
+	public function prepare() {
+		
 	}
 
 	public function control(dwHttpRequest $request, dwHttpResponse $response) {

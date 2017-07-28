@@ -141,15 +141,19 @@ class dwInterceptors {
 	 * @param dwModel $model
 	 * @return boolean
 	 */
-	public static function forAllInterceptorsDo($sfunction, dwHttpRequest $request, dwHttpResponse $response, dwModel $model)
+	public static function forAllInterceptorsDo($sfunction, dwHttpRequest $request, dwHttpResponse $response, dwModel $model, $breakIfFalse = true)
 	{
+		$bret = true;
 		foreach(self::$_aLoaded as $interceptor)
 		{
 			if($interceptor -> $sfunction($request, $response, $model) === false) {
-				return false;
+				if($breakIfFalse === true) {
+					return false;
+				}
+				$bret = false;
 			}
 		}
-		return true;
+		return $bret;
 	}
 		
 }

@@ -31,7 +31,7 @@ class dwSecurityController {
 			throw new dwException("'$class' must inherits dw\classes\dwSecurityAdapterInterface");
 		}
 
-		$adapter -> prepare($config);
+		$adapter -> digestConfig($config);
 		self::$_adapters -> set(strtolower($name), $adapter);
 
 	}
@@ -82,6 +82,14 @@ class dwSecurityController {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Return adapters
+	 * @return unknown
+	 */
+	public static function getAdapters() {
+		return self::$_adapters;
 	}
 		
 }

@@ -373,7 +373,7 @@ class dbi_dataEntity extends dwObject
 			do {
 				$data = $this -> toArray();
 				if(is_callable($mapFunction)) {
-					$data = $mapFunction($data);
+					$data = call_user_func($mapFunction, $data);
 				}
 				if($data) {
 					$r[] = $data;

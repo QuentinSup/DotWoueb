@@ -32,9 +32,9 @@ class ary
 			}
 			if(isset($ary[$name]))
 			{
-				if(!is_array($ary[$name]) && !is_null($formatRequestFunction) && function_exists($formatRequestFunction))
+				if(!is_array($ary[$name]) && !is_null($formatRequestFunction) && is_callable($formatRequestFunction))
 				{
-					$ary[$name] = $formatRequestFunction($ary[$name]);
+					$ary[$name] = call_user_func($formatRequestFunction, $ary[$name]);
 				}
 				return $ary[$name];
 			} 
@@ -52,6 +52,7 @@ class ary
 	public static function set(&$ary, $name, $mvalue)
 	{
 		$ary[$name] = $mvalue;
+		return $ary;
 	}
 	
 	public static function push(&$ary, $values) 
@@ -61,39 +62,50 @@ class ary
 		}
 	}
 	
+	/**
+	 * Return a ste of keys
+	 * @param unknown $ary
+	 * @return unknown
+	 */
 	public static function keys($ary) 
 	{
 		return array_keys($ary);
 	}
 	
-	public static function keyAt($ary, $offset) 
+	/**
+	 * Return the key at an offset position
+	 * @param unknown $ary
+	 * @param unknown $index
+	 * @return NULL|unknown
+	 */
+	public static function keyAt($ary, $index) 
 	{
 		$keys = array_keys($ary);
-		return count($keys)>$offset?$keys[$offset]:null;
+		return count($keys)>$index?$keys[$index]:null;
 	}
 
 	/**
 	 * Renvoi si le nom passe en parametre possede une valeur dans $ary
-	 * @param string $sname
-	 * @see is_set
+	 * @param string $index
+	 * @see exists
 	 */
-	public static function is_set($ary, $sname)
+	public static function is_set($ary, $index)
 	{
-		return isset($ary[$sname]);
+		return isset($ary[$index]);
 	}
 	
 	/**
 	 * Alias de is_set
-	 * @param string $sname
+	 * @param string $value
 	 * @see is_set
 	 */
-	public static function exists($ary, $sname)
+	public static function exists($ary, $value)
 	{
 		if(is_assoc($ary)) {
 
-			return self::is_set($ary, $sname);
+			return self::is_set($ary, $value);
 		}
-		return in_array($sname, $ary, false);
+		return in_array($value, $ary, false);
 	}
 	
 }

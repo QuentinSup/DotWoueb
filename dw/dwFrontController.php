@@ -85,7 +85,7 @@ class dwFrontController {
 			}
 
 			dwPlugins::forAllPluginsDo('prepareRequest', $request, $response, $model);
-			if(dwInterceptors::forAllInterceptorsDo('prepareRequest', $request, $response, $model)) {
+			if(dwInterceptors::forAllInterceptorsDo('prepareRequest', $request, $response, $model, false)) {
 
 				if(class_exists($controllerClass))
 				{
@@ -162,7 +162,7 @@ class dwFrontController {
 			}
 			
 			dwPlugins::forAllPluginsDo('terminateRequest', $request, $response, $model);
-			dwInterceptors::forAllInterceptorsDo('terminateRequest', $request, $response, $model);
+			dwInterceptors::forAllInterceptorsDo('terminateRequest', $request, $response, $model, false);
 	
 		} catch(\Exception $e) {
 			$response -> statusCode = HttpStatus::INTERNAL_SERVER_ERROR;
