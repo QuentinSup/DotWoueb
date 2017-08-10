@@ -63,6 +63,19 @@ class dwFramework
 	 * Autoloader
 	 */
 	private static $_autoLoader = null;
+	
+	/**
+	 * Logger
+	 * @return logger
+	 */
+	private static function logger() {
+		static $log = null;
+		if(is_null($log)) {
+			$log = dwLogger::getLogger(__CLASS__);
+		}
+		return $log;
+	}
+
 	/**
 	 * Nom du framework
 	 */
@@ -183,15 +196,7 @@ class dwFramework
 				"vars" => self::$_vars);
 		return $ary;	
 	}
-	
-	public static function logger() {
-		static $log = null;
-		if(is_null($log)) {
-			$log = dwLogger::getLogger(__CLASS__);
-		}
-		return $log;
-	}
-	
+		
 	public static function load()
 	{
 		
