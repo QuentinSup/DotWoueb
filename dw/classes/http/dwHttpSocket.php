@@ -20,6 +20,18 @@ class dwHttpSocket {
 	
 	protected $_headers;
 
+	/**
+	 * Logger
+	 * @return logger
+	 */
+	private static function logger() {
+		static $log = null;
+		if(is_null($log)) {
+			$log = dwLogger::getLogger(__CLASS__);
+		}
+		return $log;
+	}
+	
 	public function __construct() {
 		$this -> _headers = array();
 	}
@@ -28,18 +40,35 @@ class dwHttpSocket {
 		ary::push($this -> _headers,  $headers);
 	}
 	
-	public function Get($url, $content, $options = array()) {
+	/**
+	 * Send GET request
+	 * @param unknown $url
+	 * @param array $options
+	 * @return unknown
+	 */
+	public function Get($url, $options = array()) {
 		return $this -> send(self::HTTP_METHOD_GET, $url, null, $options);
 	}
 	
+	/**
+	 * Send request
+	 * @param unknown $method
+	 * @param unknown $url
+	 * @param unknown $data
+	 * @param array $options
+	 * @return unknown|boolean
+	 */
 	public function send($method, $url, $data, $options = array()) {
-		$response = \Requests::request($url, $this -> _headers, $data, $method, $options);
-		return $response;
-			
+		try {
+			$response = \Requests::request($url, $this -> _headers, $data, $method, $options);
+			return $response;
+		} catch(\Exception $e) {
+			self::logger() -> error("Error when trying to call request $method $url", $e);
+		}
+		return FALSE;
 	}
 
 	public static function request($method, $url, $content, $headers = array(), $options = array()) {
-		
 		$httpsocket = new dwHttpSocket();
 		$httpsocket -> setHeaders($headers);
 		return $httpsocket -> send($method, $url, $content, $options);
