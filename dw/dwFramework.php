@@ -8,6 +8,7 @@ define("DW_ROOT_DIR", dirname(dirname(__FILE__)).'/');
 define("DW_WWW_DIR", DW_ROOT_DIR."www/");
 define("DW_DEFAULT_ENCODING", "ISO-8859-1");
 
+use dw\dwFramework as dw;
 use dw\connectors\dbi\dbi;
 use dw\accessors\server;
 use dw\classes\dwLogger;
@@ -15,12 +16,11 @@ use dw\classes\dwAutoLoader;
 use dw\classes\dwHttpRequest;
 use dw\helpers\dwFile;
 use dw\dwFrontController;
-use dw\dwFramework as dw;
 use dw\dwConnectors;
 use dw\dwSecurityController;
 use dw\dwErrorController;
+use dw\dwCacheManager;
 use dw\accessors\ary;
-use dw\classes\dwCacheFile;
 use dw\helpers\dwNumeric;
 use dw\adapters\template\dwSmartyTemplate;
 use dw\classes\i18n\dwI18nXmlAdapter;
@@ -248,7 +248,7 @@ class dwFramework
 		dw::loadApplication(APP_NS);
 		
 		// Configure default dir
-		dwCacheFile::setCacheDir(APP_CACHE_DIR);
+		dwCacheManager::setCacheDir(APP_CACHE_DIR);
 		//dwPlugins::setPath(DW_PLUGINS_DIR);
 		dwSmartyTemplate::setWorkDir(APP_RUNTIME_DIR);
 		
@@ -266,7 +266,7 @@ class dwFramework
 		dwSmartyTemplate::setDefaultCaching(false); //!dw::isDebug()
 		
 		// Configure cache
-		dwCacheFile::setUseCache(!dw::isDebug());
+		dwCacheManager::setUseCache(!dw::isDebug());
 		dwI18nXMLAdapter::setDefaultCaching(!dw::isDebug());
 		
 		// Configure database interface

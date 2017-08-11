@@ -38,7 +38,7 @@ class dwI18nXmlAdapter extends dwXMLConfig implements dwI18nInterface
 		$oxml = null;
 		if($bcaching)
 		{
-			$oxml = dwCacheFile::get($scacheID);
+			$oxml = dwCacheManager::get($scacheID);
 		}
   		if(is_null($oxml))
   		{
@@ -46,7 +46,7 @@ class dwI18nXmlAdapter extends dwXMLConfig implements dwI18nInterface
 			/* L'objet est gard頥n m魯ire pour une utilisation ult鲩eure */
 			if($bcaching)
 			{
-				dwCacheFile::set($scacheID, $oxml);
+				dwCacheManager::set($scacheID, $oxml);
 			}
   		}
 		return $oxml;
