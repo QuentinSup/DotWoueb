@@ -8,7 +8,7 @@ dw_require('vendors/Requests/Requests');
 
 \Requests::register_autoloader();
 
-class dwHttpSocket {
+class dwHttpClient {
 	
 	const HTTP_METHOD_GET = "GET";
 	const HTTP_METHOD_POST = "POST";
@@ -69,7 +69,7 @@ class dwHttpSocket {
 	}
 
 	public static function request($method, $url, $content, $headers = array(), $options = array()) {
-		$httpsocket = new dwHttpSocket();
+		$httpsocket = new dwHttpClient();
 		$httpsocket -> setHeaders($headers);
 		return $httpsocket -> send($method, $url, $content, $options);
 		
