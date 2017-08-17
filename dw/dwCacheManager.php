@@ -73,29 +73,30 @@ class dwCacheManager {
 		
 		$skeyCache 	= md5($scacheID);
 		$scachefile = self::getCacheFileName($skeyCache);
-		if(!is_null($object))
-		{
+		if(is_null($object)) {
 			
 			if(self::logger() -> isDebugEnabled()) {
-				self::logger() -> debug("Update cache for '$scacheID' into cache file '$scachefile'");
+				self::logger() -> debug("Cache value for '$scacheID' is NULL : cache will not be updated");
 			}
 			
-			if(file_put_contents($scachefile, serialize($object)) > 0)
-			{
-				
-				if(self::logger() -> isDebugEnabled()) {
-					self::logger() -> debug("Cache for '$scacheID' was created");
-				}
-				
-				return true;
-			}
+			return false;	
+		}
 			
+		
+		if(self::logger() -> isDebugEnabled()) {
+			self::logger() -> debug("Update cache for '$scacheID' into cache file '$scachefile'");
+		}
+			
+		if(!file_put_contents($scachefile, serialize($object)) > 0)
+		{
+		
 			if(self::logger() -> isWarnEnabled()) {
 				self::logger() -> warn("Cache for '$scacheID' was not created");
 			}
 			
 			return false;
 		}
+
 		
 		if($keepInMemory) {
 			
@@ -105,6 +106,7 @@ class dwCacheManager {
 			
 			self::$_acache[$skeyCache] = &$object;
 		}
+		
 		return true;
 	}
 	

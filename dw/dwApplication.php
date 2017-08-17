@@ -417,6 +417,20 @@ class dwApplication extends dwXMLConfig
 		
 		dw::run($request);
 
+		$this -> _end();
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public function _end() {
+		
+		foreach($this -> _controllers as $controller) {
+			
+			// Process annotations
+			dwAnnotations::end($this, $controller);
+		}
 	}
 	
 }

@@ -196,12 +196,15 @@ class dwFramework
 				"vars" => self::$_vars);
 		return $ary;	
 	}
-		
-	public static function load()
-	{
-		
-		self::loadConfig(DW_WWW_DIR);
+	
+	/**
+	 * Initialize framework
+	 */
+	public static function init() {
 
+		// Load configuration
+		self::loadConfig(DW_WWW_DIR);
+		
 		if(!defined('DW_BASE_DIR'))		    define('DW_BASE_DIR', DW_ROOT_DIR."dw/");
 		if(!defined('DW_CONNECTORS_DIR'))	define('DW_CONNECTORS_DIR', DW_BASE_DIR."connectors/");
 		if(!defined('DW_PROCESSORS_DIR')) 	define("DW_PROCESSORS_DIR", DW_BASE_DIR."processors/");
@@ -216,17 +219,27 @@ class dwFramework
 		if(!defined('APP_WEBAPP_DIR'))  		define("APP_WEBAPP_DIR", APP_DIR."webapp/");
 		if(!defined('APP_WEBINF_DIR'))			define("APP_WEBINF_DIR", APP_DIR."web-inf/");
 		if(!defined('APP_I18N_DIR'))			define("APP_I18N_DIR", APP_DIR."i18n/");
-
+		
 		if(!defined('APP_RUNTIME_DIR'))			define("APP_RUNTIME_DIR", APP_WEBINF_DIR."runtime/");
 		if(!defined('APP_CACHE_DIR'))			define("APP_CACHE_DIR", APP_RUNTIME_DIR."cache/");
 		if(!defined('APP_DBI_ENTITYDEF_DIR'))	define("APP_DBI_ENTITYDEF_DIR", APP_RUNTIME_DIR."entity/");
-
+		
 		dw_require("classes/dwLogger");
 		dw_require("classes/dwAutoLoader");
-		dw_require("dwFrontController");
 		
 		self::$_autoLoader = new dwAutoLoader(array("dw" => DW_BASE_DIR));
-				
+	}
+	
+	/**
+	 * Load framework
+	 */
+	public static function load()
+	{
+		// Initialize
+		self::init();
+	
+		dw_require("dwFrontController");
+
 		// Configure loggers
 		dwLogger::configure(DW_WWW_DIR.'log4php.xml');
 				
@@ -277,6 +290,11 @@ class dwFramework
 		dw::App() -> prepare();
 	}
 
+	/**
+	 * 
+	 * @param dwHttpRequest $request
+	 * @param string $buseDefaultController
+	 */
 	public static function run(dwHttpRequest $request, $buseDefaultController = true)
 	{
 		dwFrontController::singleton() -> run($request, APP_CONTROLLERS_DIR, $buseDefaultController);

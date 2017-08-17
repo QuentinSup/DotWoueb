@@ -3,6 +3,7 @@
 namespace dw\classes\http;
 
 use dw\accessors\ary;
+use dw\classes\dwLogger;
 
 dw_require('vendors/Requests/Requests');
 
