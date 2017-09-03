@@ -53,14 +53,17 @@ class dwXMLConfig
 		
 		$oroot = $oxml -> root();
 		
-		if(isset($oroot -> about))
+		if($oroot -> about)
 		{
 			$this -> _name		   = (string)$oroot -> about -> name -> cdata;
 			$this -> _description  = (string)$oroot -> about -> description -> cdata;
 			$this -> _author 	   = (string)$oroot -> about -> author -> cdata;
 			$this -> _version 	   = (string)$oroot -> about -> version -> cdata;
 		}
-		if(isset($oroot -> config))
+		
+		
+		
+		if($oroot -> config)
 		{
 			$this -> setXMLConfig($oroot -> config);
 		}
@@ -93,7 +96,7 @@ class dwXMLConfig
 	public function setXMLConfig($config)
 	{
 		$svar = 'var';
-		if(isset($config -> $svar))
+		if($config -> $svar)
 		{
 			if(is_seq($config -> $svar))
 			{
