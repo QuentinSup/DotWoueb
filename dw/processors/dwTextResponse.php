@@ -6,12 +6,12 @@ use dw\classes\dwHttpResponseInterface;
 
 class dwTextResponse implements dwHttpResponseInterface {
 	
+	protected $_str = "";
+	
 	public static function getCallerName() {
 		return "text";
 	}
-	
-	protected $_str = "";
-	
+
 	public function __construct($str) {
 		$this -> _str = $str;
 	}

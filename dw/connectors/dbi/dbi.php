@@ -5,6 +5,7 @@ namespace dw\connectors\dbi;
 use dw\classes\dwObject;
 use dw\classes\dwException;
 use dw\classes\dwLogger;
+use dw\accessors\ary;
 
 /**
  * Gere l'interface avec la base de donnees
@@ -25,7 +26,7 @@ define('E_DBI_FOREACHROW', 409);
 define('DBI_MODE_RELEASE', 0);
 define('DBI_MODE_WARN', 1);
 define('DBI_MODE_DEBUG', 2);
-define('DBI_ENCODING', '');
+define('DBI_ENCODING', 'utf8');
 
 define('DW_FIELD_TYPE_NUMERIC', 'numeric');
 define('DW_FIELD_TYPE_STRING', 'string');
@@ -797,37 +798,7 @@ class dbi
 	  	}
   	}
   }
-  
-  /**
-   * Prepare le texte pour une insertion en effectuant une conversion en UTF8 si necessaire.
-   * @param string $svalue la valeur
-   * @return string la valeur convertie pour l'insertion
-   */
-  public static function formatValue($svalue) {
-    $svalue = !get_magic_quotes_gpc()?addslashes($svalue):$svalue;
-    $svalue = html_entity_decode($svalue);
-    switch(strtoupper($this -> _sencode)) {
-      case 'UTF8':  return utf8_encode($svalue);
-      case 'ISO' :  
-      default:
-      				return $svalue;
-    }
-  }
-  /**
-   * Prepare le texte pour une impression ecran
-   * @param string $svalue la valeur 
-   * @return string la valeur preparee pour l'affichage a l'ecran
-   */
-  public static function displayValue($svalue) {
-    $svalue = htmlentities($svalue);
-    switch(strtoupper($this -> _sencode)) {
-      case 'UTF8':  return utf8_decode($svalue);
-      case 'ISO' :  
-      default:
-      				return $svalue;
-    } 
-  }
-  
+
   public function getMaxId($sentity, $sfieldid)
   {
   	$ores = $this -> query("SELECT MAX(".$sfieldid.") as id FROM ".$sentity);
@@ -963,10 +934,23 @@ class dbi
 	   		}
 	    }
     	$this -> _odb = new $className();
-    	if(!$this -> _odb -> connect($this -> _sserver, $this -> _iport, $this -> _suser, $this -> _spassword, $this -> _sdatabase, $aoptions))
+    	
+    	$persistent = ary::get($aoptions, 'persistent', false); 
+    	$charset = ary::get($aoptions, 'charset', $this -> _sencode);
+    	
+    	$res = FALSE;
+    	if($persistent) {
+    		$res = $this -> _odb -> pconnect($this -> _sserver, $this -> _iport, $this -> _suser, $this -> _spassword, $this -> _sdatabase);
+    	} else {
+    		$res = $this -> _odb -> connect($this -> _sserver, $this -> _iport, $this -> _suser, $this -> _spassword, $this -> _sdatabase);
+    	}
+    	if($res == FALSE)
     	{
     		throw new dwException(E_DBI_CONNECT);	
     	}
+    	
+    	$this -> _odb -> setClientEncoding($charset);
+    	
     	self::$_currentConnection = $this;
     } else {
     	throw new dwException(E_DBI_DSN);

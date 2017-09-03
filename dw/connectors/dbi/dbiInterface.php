@@ -6,7 +6,8 @@ abstract class dbiInterface
 {
 	protected $_reslink = null;
 
-	public abstract function connect($shost, $sport, $suser, $spassword, $sdatabase, $aoptions);
+	public abstract function connect($shost, $sport, $suser, $spassword, $sdatabase);
+	public abstract function pconnect($shost, $sport, $suser, $spassword, $sdatabase);
 	public abstract function disconnect();
 	public abstract function prepareQuery($squery, $aparams = array(), $ioffset = null, $ilimit = null);
 	public abstract function escapeString($svalue);
