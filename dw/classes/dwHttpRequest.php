@@ -25,8 +25,22 @@ class dwHttpRequest {
 	public function __construct($uri = null, $method = null, $contentType = null) {
 
 		$context = server::get('CONTEXT_PREFIX');
+		
+		// Wrong value
 		if($context == "/system-bin/") {
 			$context = "";
+		}
+		
+		if(!$context) {
+		   
+		   // Resolve context from SCRIPT_NAME
+		   $scriptName = server::get('SCRIPT_NAME');
+		   $scriptPath = explode('/', $scriptName);
+		   
+		   if(count($scriptPath) > 2) {
+		       $context = '/'.$scriptPath[1];
+		   }
+		   
 		}
 
 		if(is_null($uri)) {
@@ -202,7 +216,7 @@ class dwHttpRequest {
 	public function Body() {
 		$body = $this -> getRequestBody();
 		if($this -> isJSONContent()) {
-			return json_decode($body);
+			return new dwObject(json_decode($body));
 		}
 		return $body;
 	}
@@ -231,5 +245,3 @@ class dwHttpRequest {
 		return $this -> getUploadedFile($name);
 	}
 }
-
-?>
