@@ -66,5 +66,4 @@ namespace dw\classes;
     	echo implode('<br />', self::toArray($oexception));
     }
         
- }
-?>
+}

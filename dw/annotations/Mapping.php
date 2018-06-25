@@ -81,5 +81,3 @@ class Mapping extends Annotation {
 	
 	
 }
-
-?>

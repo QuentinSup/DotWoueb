@@ -100,5 +100,3 @@ class dbi_postgresql extends dbiInterface {
 		throw new dwException ( "getInsertId: Fonction non implementees pour PostgreSQL" );
 	}
 }
-
-?>

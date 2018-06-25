@@ -94,8 +94,4 @@ class dwSmartyTemplate extends \Smarty
     	return self::$_defaultCaching;
     }
     
-
-	
 }
-
-?>

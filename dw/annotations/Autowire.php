@@ -59,5 +59,3 @@ class Autowire extends Annotation {
 	
 	
 }
-
-?>

@@ -107,9 +107,22 @@ class dwFrontController {
 								$resp = $controller -> $controllerMethod($request, $response, $model);
 							}
 
+							if(is_bool($resp)) {
+							    if($resp === TRUE) {
+							        $resp = HttpStatus::OK;
+							    } elseif($resp === FALSE) {
+							        $resp = HttpStatus::INTERNAL_SERVER_ERROR;
+							    }
+							}
+							
 							if(is_numeric($resp)) {
 								$response -> statusCode = $resp;
-								$resp = new dwTextResponse("");
+								if($response -> isJSONContent()) {
+								    $resp = new dwJsonResponse("");
+								} else {
+								    $resp = new dwTextResponse("");
+								}
+								
 							} elseif(is_string($resp)) {
 								
 								if(strpos($resp, 'redirect:') === 0) {
@@ -173,4 +186,3 @@ class dwFrontController {
 		
 	}
 }
-?>

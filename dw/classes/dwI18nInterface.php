@@ -8,5 +8,3 @@ interface dwI18nInterface
 	public function set($stag, $svalue);
 	public function exists($mtag);
 }
-
-?>

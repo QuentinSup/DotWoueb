@@ -10,5 +10,3 @@ interface dwConnectorInterface {
 	public function getInstance();
 	
 }
-
-?>

@@ -155,5 +155,3 @@ class dbi_mysqli extends dbiInterface {
 		return mysqli_insert_id ( $this->_reslink );
 	}
 }
-
-?>

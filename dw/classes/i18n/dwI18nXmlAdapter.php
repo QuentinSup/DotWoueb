@@ -147,5 +147,3 @@ class dwI18nXmlAdapter extends dwXMLConfig implements dwI18nInterface
 	}
 	
 }
-
-?>

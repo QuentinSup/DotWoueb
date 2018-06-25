@@ -10,15 +10,18 @@ class dwJsonResponse extends dwTextResponse {
 	
 	public function __construct($data) {
 
-		$json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	    $json = null;
+	    
+	    if(isset($data) && strlen($data) > 0) {
+	        
+		  $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 		
-		if($json === FALSE) {
-			throw new \Exception(json_last_error_msg());
-		}
-		
+    		if($json === FALSE) {
+    			throw new \Exception(json_last_error_msg());
+    		}
+	    }
+	    
 		parent::__construct($json);
 	}
 
 }
-
-?>

@@ -72,5 +72,3 @@ class Cache extends Annotation {
 	
 	
 }
-
-?>

@@ -21,5 +21,3 @@ class dwTextResponse implements dwHttpResponseInterface {
 	}
 
 }
-
-?>

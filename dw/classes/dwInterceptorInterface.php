@@ -16,5 +16,3 @@ interface dwInterceptorInterface
 	public function processRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
 	public function terminateRequest(dwHttpRequest $request, dwHttpResponse $response, dwModel $model);
 }
-
-?>

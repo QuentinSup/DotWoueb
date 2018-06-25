@@ -52,5 +52,3 @@ final class HttpStatus {
     const HTTP_VERSION_NOT_SUPPORTED = 505;
  
 }
-
-?>

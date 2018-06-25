@@ -107,5 +107,3 @@ class dwLdapConnection {
 		return null;
 	}
 }
-
-?>
