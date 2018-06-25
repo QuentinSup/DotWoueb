@@ -329,10 +329,21 @@ class dbi_dataEntity extends dwObject
 		return $this -> _odataSet -> getNumRows();
 	}
 	
+	public function getAffectedRows()
+	{
+	    return $this -> _odataSet -> getAffectedRows();
+	}
+	
 	public function delete($whereAdd = null, $avalues = null)
 	{
 		$this -> setFrom($avalues);
 		return $this -> _odb -> delete($this -> _sentity, $this -> getAttributes(true), $whereAdd);
+	}
+	
+	public function deleteN($whereAdd = null, $avalues = null)
+	{
+	    $dataset = $this -> delete($whereAdd, $avalues);
+	    return $dataset -> getAffectedRows();
 	}
 	
 	public function insert($avalues = null)
@@ -1395,4 +1406,3 @@ class '.$stable.'Entity extends dw\\connectors\\dbi\\dbi_dataEntity
   }
   
 }
-?>

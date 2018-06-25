@@ -135,5 +135,3 @@ class dwSmtpConnector implements dwConnectorInterface {
 	}
 	
 }
-
-?>

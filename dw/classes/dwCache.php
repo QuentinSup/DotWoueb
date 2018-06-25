@@ -43,5 +43,3 @@ class dwCache implements dwCacheInterface {
 	}
 	
 }
-
-?>

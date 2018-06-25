@@ -15,5 +15,3 @@ class dwFileResponse extends dwTextResponse {
 	}
 
 }
-
-?>

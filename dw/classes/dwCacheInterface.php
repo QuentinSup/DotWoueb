@@ -10,5 +10,3 @@ interface dwCacheInterface {
 	public function put($object);
 	public function get();
 }
-
-?>

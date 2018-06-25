@@ -45,5 +45,3 @@ class Database extends Annotation {
 	
 	
 }
-
-?>

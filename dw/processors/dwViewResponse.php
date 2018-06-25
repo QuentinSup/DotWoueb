@@ -149,4 +149,3 @@ class dwViewResponse implements dwHttpResponseInterface
 	}
 	
 }
-?>

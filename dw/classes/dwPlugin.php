@@ -46,5 +46,3 @@ abstract class dwPlugin extends dwXMLConfig implements dwPluginInterface
 	}
 		
 }
- 
-?>

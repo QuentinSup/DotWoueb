@@ -25,5 +25,3 @@ class Session extends Annotation {
 	
 	
 }
-
-?>

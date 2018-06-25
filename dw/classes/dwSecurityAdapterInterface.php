@@ -9,5 +9,3 @@ interface dwSecurityAdapterInterface {
 	public function control(dwHttpRequest $request, dwHttpResponse $response);
 	
 }
-
-?>

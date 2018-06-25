@@ -202,7 +202,7 @@ class dwHttpRequest {
 	public function Body() {
 		$body = $this -> getRequestBody();
 		if($this -> isJSONContent()) {
-			return json_decode($body);
+			return new dwObject(json_decode($body));
 		}
 		return $body;
 	}
@@ -231,5 +231,3 @@ class dwHttpRequest {
 		return $this -> getUploadedFile($name);
 	}
 }
-
-?>
