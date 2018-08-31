@@ -2,6 +2,8 @@
 
 namespace dw\classes;
 
+use dw\accessors\ary;
+
 /**
  * dwRequestFile
  * Gère les upload de fichiers par formulaire
